@@ -1,0 +1,212 @@
+{
+  "scenario_name": "Test Yogurt Facility",
+  "timestamp": "2025-08-16T00:53:38.757181",
+  "kpis": {
+    "npv": 7283225.1708335765,
+    "irr": 0.20610290527294167,
+    "payback_years": 5.1110104633253775,
+    "tpa": 17.347581114181825,
+    "target_tpa": 10.0,
+    "capex": 10092049.906485533,
+    "opex": 2928424.1474833074,
+    "opex_per_kg": 168.8087882805339,
+    "ebitda_margin": 0.6028028511046261,
+    "up_utilization": 1.0,
+    "ds_utilization": 0.3016835016835017
+  },
+  "capacity": {
+    "per_strain": [
+      {
+        "name": "S. thermophilus",
+        "fermentation_time_h": 14.0,
+        "turnaround_time_h": 9.0,
+        "downstream_time_h": 4.0,
+        "batch_mass_kg": 20.096,
+        "cv_ferm": 0.1,
+        "cv_turn": 0.1,
+        "cv_down": 0.1,
+        "utility_rate_ferm_kw": 252.0,
+        "utility_rate_cent_kw": 15.0,
+        "utility_rate_lyo_kw": 1.5,
+        "utility_cost_steam": 0.0228,
+        "ct_up_h": 23.0,
+        "ct_ds_h": 4.0,
+        "reactors_assigned": 2.0,
+        "ds_lines_assigned": 1.0,
+        "up_capacity_batches": 700.8000000000001,
+        "ds_capacity_batches": 1971.0,
+        "feasible_batches": 700.8000000000001,
+        "good_batches": 686.7840000000001,
+        "up_utilization": 1.0,
+        "ds_utilization": 0.35555555555555557,
+        "annual_kg_good": 13801.611264000003
+      },
+      {
+        "name": "L. delbrueckii subsp. bulgaricus",
+        "fermentation_time_h": 24.0,
+        "turnaround_time_h": 9.0,
+        "downstream_time_h": 4.0,
+        "batch_mass_kg": 7.408,
+        "cv_ferm": 0.1,
+        "cv_turn": 0.1,
+        "cv_down": 0.1,
+        "utility_rate_ferm_kw": 432.0,
+        "utility_rate_cent_kw": 15.0,
+        "utility_rate_lyo_kw": 1.5,
+        "utility_cost_steam": 0.0228,
+        "ct_up_h": 33.0,
+        "ct_ds_h": 4.0,
+        "reactors_assigned": 2.0,
+        "ds_lines_assigned": 1.0,
+        "up_capacity_batches": 488.4363636363637,
+        "ds_capacity_batches": 1971.0,
+        "feasible_batches": 488.4363636363637,
+        "good_batches": 478.6676363636364,
+        "up_utilization": 1.0,
+        "ds_utilization": 0.24781144781144784,
+        "annual_kg_good": 3545.969850181819
+      }
+    ],
+    "total_feasible_batches": 1189.2363636363639,
+    "total_good_batches": 1165.4516363636365,
+    "total_annual_kg": 17347.581114181823,
+    "weighted_up_utilization": 1.0,
+    "weighted_ds_utilization": 0.3016835016835017,
+    "bottleneck": "upstream",
+    "kg_p10": null,
+    "kg_p50": null,
+    "kg_p90": null
+  },
+  "equipment": {
+    "counts": {
+      "2000.0L_fermenters": 4,
+      "seed_fermenters": 3,
+      "media_tanks": 4,
+      "centrifuges": 2,
+      "tff_skids": 1,
+      "lyophilizers": 2,
+      "cone_mills": 1,
+      "v_blenders": 1,
+      "qc_labs": 1
+    },
+    "specifications": {
+      "fermenter_volume_l": 2000.0,
+      "seed_fermenter_volume_l": 250.0,
+      "media_tank_volume_l": 2500.0,
+      "lyophilizer_size_m2": 20,
+      "v_blender_volume_l": 500,
+      "anaerobic_processing": false,
+      "cost_breakdown": {
+        "fermenters": {
+          "unit_cost": 150000.0,
+          "total_cost": 600000.0,
+          "count": 4,
+          "volume_l": 2000.0
+        },
+        "downstream": {
+          "centrifuges": {
+            "count": 2,
+            "unit_cost": 200000.0,
+            "total_cost": 400000.0
+          },
+          "tff_skids": {
+            "count": 1,
+            "unit_cost": 150000.0,
+            "total_cost": 150000.0
+          },
+          "lyophilizers": {
+            "count": 2,
+            "unit_cost": 1000000.0,
+            "total_cost": 2000000.0,
+            "size_m2": 20
+          },
+          "total_downstream_cost": 2550000.0
+        },
+        "auxiliary": {
+          "seed_fermenters": {
+            "count": 3,
+            "volume_l": 250.0,
+            "unit_cost": 12922.856493716645,
+            "total_cost": 38768.569481149934
+          },
+          "media_tanks": {
+            "count": 4,
+            "volume_l": 2500.0,
+            "unit_cost": 34297.87889454948,
+            "total_cost": 137191.51557819793
+          },
+          "cone_mill": {
+            "count": 1,
+            "unit_cost": 50000,
+            "total_cost": 50000
+          },
+          "v_blender": {
+            "count": 1,
+            "volume_l": 500,
+            "unit_cost": 30000,
+            "total_cost": 30000
+          },
+          "qc_lab": {
+            "count": 1,
+            "unit_cost": 250000,
+            "total_cost": 250000
+          },
+          "total_auxiliary_cost": 505960.08505934785
+        },
+        "utilities": {
+          "pw_wfi_system": 274197.0063794511,
+          "clean_steam": 182798.00425296742,
+          "cip_system": 182798.00425296742,
+          "hvac": 182798.00425296742,
+          "electrical": 91399.00212648371,
+          "total_utilities": 913990.021264837
+        }
+      }
+    },
+    "equipment_cost": 4569950.106324185,
+    "installation_cost": 685492.5159486277,
+    "utilities_cost": 913990.021264837,
+    "total_installed_cost": 5255442.622272813
+  },
+  "economics": {
+    "annual_revenue": 7372721.973527275,
+    "raw_materials_cost": 186784.4363636364,
+    "utilities_cost": 1552444.2015504944,
+    "labor_cost": 669500.0,
+    "maintenance_cost": 411295.5095691766,
+    "ga_other_cost": 108400.0,
+    "total_opex": 2928424.1474833074,
+    "land_cost": 750000.0,
+    "building_cost": 3000000.0,
+    "equipment_cost": 4569950.106324185,
+    "contingency": 1039993.7632905231,
+    "working_capital": 732106.0368708269,
+    "total_capex": 10092049.906485533,
+    "npv": 7283225.1708335765,
+    "irr": 0.20610290527294167,
+    "payback_years": 5.1110104633253775,
+    "ebitda_margin": 0.6028028511046261,
+    "cash_flows": [
+      -7064434.934539873,
+      -3027614.9719456597,
+      1427913.7241422427,
+      2094558.3980488372,
+      2761203.0719554326,
+      3427847.7458620276,
+      3427847.7458620276,
+      3427847.7458620276,
+      3427847.7458620276,
+      3427847.7458620276,
+      3427847.7458620276,
+      3427847.7458620276,
+      3333223.3695329754
+    ],
+    "licensing_fixed": 0.0,
+    "licensing_royalty_rate": 0.0
+  },
+  "optimization": null,
+  "sensitivity": null,
+  "warnings": [],
+  "errors": [],
+  "calculation_time_s": 0.0031223297119140625
+}

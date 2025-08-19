@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioprocess Facility Designer</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/static/css/styles.css" rel="stylesheet">
+    
+    <!-- Plotly.js for charts -->
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-gear-wide-connected"></i> Bioprocess Designer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light me-2" onclick="saveScenario()">
+                            <i class="bi bi-save"></i> Save
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light me-2" onclick="loadScenario()">
+                            <i class="bi bi-folder-open"></i> Load
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-success" onclick="runScenario()">
+                            <i class="bi bi-play-circle"></i> Run Analysis
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <!-- Left Panel - Input Forms -->
+            <div class="col-lg-4">
+                <div class="accordion" id="inputAccordion">
+                    
+                    <!-- Scenario Settings -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#scenarioCollapse">
+                                <i class="bi bi-diagram-3 me-2"></i> Scenario Settings
+                            </button>
+                        </h2>
+                        <div id="scenarioCollapse" class="accordion-collapse collapse show" data-bs-parent="#inputAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <label for="scenarioName" class="form-label">Scenario Name</label>
+                                    <input type="text" class="form-control" id="scenarioName" value="Baseline 10 TPA Facility">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="targetTPA" class="form-label">Target Production (TPA)</label>
+                                    <input type="number" class="form-control" id="targetTPA" value="10" min="1" step="1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="simulationType" class="form-label">Simulation Type</label>
+                                    <select class="form-select" id="simulationType">
+                                        <option value="deterministic">Deterministic</option>
+                                        <option value="monte_carlo">Monte Carlo</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="monteCarloSettings" style="display: none;">
+                                    <label for="mcSamples" class="form-label">Monte Carlo Samples</label>
+                                    <input type="number" class="form-control" id="mcSamples" value="1000" min="100" max="10000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strain Management -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#strainCollapse">
+                                <i class="bi bi-virus me-2"></i> Strain Management
+                            </button>
+                        </h2>
+                        <div id="strainCollapse" class="accordion-collapse collapse" data-bs-parent="#inputAccordion">
+                            <div class="accordion-body">
+                                <button class="btn btn-primary btn-sm mb-3" onclick="showStrainModal()">
+                                    <i class="bi bi-plus-circle"></i> Add Strain
+                                </button>
+                                <div id="strainList" class="list-group">
+                                    <!-- Strain list will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equipment Configuration -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#equipmentCollapse">
+                                <i class="bi bi-cpu me-2"></i> Equipment Configuration
+                            </button>
+                        </h2>
+                        <div id="equipmentCollapse" class="accordion-collapse collapse" data-bs-parent="#inputAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label for="reactors" class="form-label">Reactors</label>
+                                        <input type="number" class="form-control" id="reactors" value="4" min="1" max="20">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="dsLines" class="form-label">DS Lines</label>
+                                        <input type="number" class="form-control" id="dsLines" value="2" min="1" max="10">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fermenterVolume" class="form-label">Fermenter Volume (L)</label>
+                                    <select class="form-select" id="fermenterVolume">
+                                        <option value="500">500 L</option>
+                                        <option value="1000">1,000 L</option>
+                                        <option value="2000" selected>2,000 L</option>
+                                        <option value="5000">5,000 L</option>
+                                        <option value="10000">10,000 L</option>
+                                        <option value="20000">20,000 L</option>
+                                        <option value="50000">50,000 L</option>
+                                    </select>
+                                    <div class="form-text mt-2">
+                                        Working volume fraction: <span class="badge bg-secondary">80% (fixed)</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="allocationPolicy" class="form-label">Allocation Policy</label>
+                                    <select class="form-select" id="allocationPolicy">
+                                        <option value="equal">Equal</option>
+                                        <option value="proportional">Proportional</option>
+                                        <option value="inverse_ct" selected>Inverse CT</option>
+                                    </select>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sharedDownstream" checked>
+                                    <label class="form-check-label" for="sharedDownstream">
+                                        Shared Downstream Processing
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic Parameters -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#economicCollapse">
+                                <i class="bi bi-currency-dollar me-2"></i> Economic Parameters
+                            </button>
+                        </h2>
+                        <div id="economicCollapse" class="accordion-collapse collapse" data-bs-parent="#inputAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label for="discountRate" class="form-label">Discount Rate (%)</label>
+                                        <input type="number" class="form-control" id="discountRate" value="10" min="0" max="30" step="0.1">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="taxRate" class="form-label">Tax Rate (%)</label>
+                                        <input type="number" class="form-control" id="taxRate" value="25" min="0" max="50" step="0.1">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label for="depreciationYears" class="form-label">Depreciation (years)</label>
+                                        <input type="number" class="form-control" id="depreciationYears" value="10" min="5" max="20">
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="projectLifetime" class="form-label">Project Life (years)</label>
+                                        <input type="number" class="form-control" id="projectLifetime" value="15" min="10" max="30">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="electricityCost" class="form-label">Electricity Cost ($/kWh)</label>
+                                    <input type="number" class="form-control" id="electricityCost" value="0.107" min="0" step="0.001">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optimization Settings -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#optimizationCollapse">
+                                <i class="bi bi-sliders me-2"></i> Optimization Settings
+                            </button>
+                        </h2>
+                        <div id="optimizationCollapse" class="accordion-collapse collapse" data-bs-parent="#inputAccordion">
+                            <div class="accordion-body">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="enableOptimization">
+                                    <label class="form-check-label" for="enableOptimization">
+                                        Enable Equipment Optimization
+                                    </label>
+                                </div>
+                                <div id="optimizationParams" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Objectives</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="objNPV" value="npv" checked>
+                                            <label class="form-check-label" for="objNPV">Maximize NPV</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="objIRR" value="irr">
+                                            <label class="form-check-label" for="objIRR">Maximize IRR</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="objCAPEX" value="capex">
+                                            <label class="form-check-label" for="objCAPEX">Minimize CAPEX</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Panel - Results and Visualizations -->
+            <div class="col-lg-8">
+                <!-- KPI Cards -->
+                <div class="row mb-3" id="kpiCards" style="display: none;">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">NPV</h5>
+                                <h3 class="text-success" id="kpiNPV">-</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">IRR</h5>
+                                <h3 class="text-info" id="kpiIRR">-</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Payback</h5>
+                                <h3 class="text-warning" id="kpiPayback">-</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Capacity</h5>
+                                <h3 class="text-primary" id="kpiCapacity">-</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Tabs -->
+                <div id="resultsTabs" style="display: none;">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#capacityTab">
+                                <i class="bi bi-speedometer2"></i> Capacity
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#economicsTab">
+                                <i class="bi bi-cash-stack"></i> Economics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#equipmentTab">
+                                <i class="bi bi-gear"></i> Equipment
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#chartsTab">
+                                <i class="bi bi-graph-up"></i> Charts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#sensitivityTab">
+                                <i class="bi bi-diagram-2"></i> Sensitivity
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+                        <!-- Capacity Tab -->
+                        <div class="tab-pane fade show active" id="capacityTab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Capacity Analysis</h5>
+                                    <div id="capacityChart"></div>
+                                    <div class="table-responsive mt-3">
+                                        <table class="table table-sm" id="capacityTable">
+                                            <!-- Capacity details table -->
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Economics Tab -->
+                        <div class="tab-pane fade" id="economicsTab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Economic Analysis</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div id="capexChart"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="opexChart"></div>
+                                        </div>
+                                    </div>
+                                    <div id="cashFlowChart" class="mt-3"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Equipment Tab -->
+                        <div class="tab-pane fade" id="equipmentTab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Equipment Sizing</h5>
+                                    <div id="equipmentChart"></div>
+                                    <div class="table-responsive mt-3">
+                                        <table class="table table-sm" id="equipmentTable">
+                                            <!-- Equipment details table -->
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Tab -->
+                        <div class="tab-pane fade" id="chartsTab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Visualizations</h5>
+                                    <div id="utilizationChart"></div>
+                                    <div id="productionChart" class="mt-3"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sensitivity Tab -->
+                        <div class="tab-pane fade" id="sensitivityTab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Sensitivity Analysis</h5>
+                                    <button class="btn btn-primary btn-sm mb-3" onclick="runSensitivity()">
+                                        <i class="bi bi-play"></i> Run Sensitivity
+                                    </button>
+                                    <div id="tornadoChart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Welcome Message (shown initially) -->
+                <div id="welcomeMessage" class="text-center mt-5">
+                    <i class="bi bi-gear-wide-connected" style="font-size: 5rem; color: #6c757d;"></i>
+                    <h3 class="mt-3">Welcome to Bioprocess Facility Designer</h3>
+                    <p class="text-muted">Configure your scenario parameters and click "Run Analysis" to begin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strain Modal -->
+    <div class="modal fade" id="strainModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add/Edit Strain</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="strainName" class="form-label">Strain Name</label>
+                                <select class="form-select" id="strainName" onchange="loadStrainDefaults()">
+                                    <option value="">Select a strain...</option>
+                                    <option value="S. thermophilus">S. thermophilus</option>
+                                    <option value="L. delbrueckii subsp. bulgaricus">L. delbrueckii subsp. bulgaricus</option>
+                                    <option value="L. acidophilus">L. acidophilus</option>
+                                    <option value="B. animalis subsp. lactis">B. animalis subsp. lactis</option>
+                                    <option value="L. rhamnosus GG">L. rhamnosus GG</option>
+                                    <option value="L. casei">L. casei</option>
+                                    <option value="L. plantarum">L. plantarum</option>
+                                    <option value="B. breve">B. breve</option>
+                                    <option value="B. longum">B. longum</option>
+                                    <option value="Bacillus coagulans">Bacillus coagulans</option>
+                                    <option value="Bacillus subtilis">Bacillus subtilis</option>
+                                    <option value="Saccharomyces boulardii">Saccharomyces boulardii</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="strainYield" class="form-label">Yield (g/L)</label>
+                                <input type="number" class="form-control" id="strainYield" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="strainFermTime" class="form-label">Fermentation Time (h)</label>
+                                <input type="number" class="form-control" id="strainFermTime" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="strainTurnTime" class="form-label">Turnaround Time (h)</label>
+                                <input type="number" class="form-control" id="strainTurnTime" step="0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="strainDSTime" class="form-label">Downstream Time (h)</label>
+                                <input type="number" class="form-control" id="strainDSTime" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="strainMediaCost" class="form-label">Media Cost ($/batch)</label>
+                                <input type="number" class="form-control" id="strainMediaCost" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="strainCryoCost" class="form-label">Cryo Cost ($/batch)</label>
+                                <input type="number" class="form-control" id="strainCryoCost" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStrain()">Save Strain</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div class="modal fade" id="progressModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Processing...</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <p class="mt-3" id="progressMessage">Initializing...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="cancelJob()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application JavaScript -->
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/sse-client.js"></script>
+    <script src="/static/js/client-id-helper.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

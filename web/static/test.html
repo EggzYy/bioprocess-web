@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Click Test</title>
+</head>
+<body>
+    <h1>Testing Button Click Functions</h1>
+    
+    <div style="margin: 20px;">
+        <h2>Test buttons that should call the functions:</h2>
+        
+        <button onclick="runScenario()" style="margin: 5px; padding: 10px;">
+            Test runScenario()
+        </button>
+        
+        <button onclick="runOptimization()" style="margin: 5px; padding: 10px;">
+            Test runOptimization()
+        </button>
+        
+        <button onclick="exportToExcel()" style="margin: 5px; padding: 10px;">
+            Test exportToExcel()
+        </button>
+        
+        <button onclick="saveScenario()" style="margin: 5px; padding: 10px;">
+            Test saveScenario()
+        </button>
+        
+        <button onclick="loadScenario()" style="margin: 5px; padding: 10px;">
+            Test loadScenario()
+        </button>
+        
+        <button onclick="loadPreset('facility_1_yogurt')" style="margin: 5px; padding: 10px;">
+            Test loadPreset()
+        </button>
+        
+        <button onclick="testFunctions()" style="margin: 5px; padding: 10px; background: yellow;">
+            Check All Functions
+        </button>
+    </div>
+    
+    <div id="results" style="margin: 20px; padding: 20px; border: 1px solid #ccc;">
+        <h3>Results will appear here</h3>
+    </div>
+    
+    <!-- Load the same JS file -->
+    <script src="/static/js/app-comprehensive.js"></script>
+    
+    <script>
+        function testFunctions() {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Function Test Results:</h3><ul>';
+            
+            const functions = [
+                'runScenario',
+                'runOptimization',
+                'exportToExcel',
+                'saveScenario',
+                'loadScenario',
+                'loadPreset',
+                'cancelJob',
+                'appState',
+                'API_ENDPOINTS'
+            ];
+            
+            functions.forEach(fn => {
+                const exists = typeof window[fn] !== 'undefined';
+                const type = typeof window[fn];
+                const status = exists ? '✓' : '✗';
+                const color = exists ? 'green' : 'red';
+                html += `<li style="color: ${color}">${status} ${fn} (${type})</li>`;
+            });
+            
+            html += '</ul>';
+            
+            // Try to actually call a simple function
+            try {
+                if (typeof window.saveScenario === 'function') {
+                    html += '<p style="color: green">✓ saveScenario is callable</p>';
+                } else {
+                    html += '<p style="color: red">✗ saveScenario is not a function</p>';
+                }
+            } catch (e) {
+                html += `<p style="color: red">Error: ${e.message}</p>`;
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            setTimeout(testFunctions, 1000);
+        });
+    </script>
+</body>
+</html>

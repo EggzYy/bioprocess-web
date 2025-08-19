@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioprocess Facility Designer - Comprehensive</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/static/css/styles.css" rel="stylesheet">
+    
+    <!-- Plotly.js for charts -->
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    
+    <style>
+        .parameter-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .parameter-header {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+        .strain-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+        .input-group-text {
+            min-width: 50px;
+        }
+        .table-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+        .table-input:focus {
+            outline: 2px solid #0d6efd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-gear-wide-connected"></i> Bioprocess Designer Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="scenarioDropdown" role="button" data-bs-dropdown="dropdown">
+                            <i class="bi bi-folder"></i> Scenarios
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="saveScenario()">Save Current</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadScenario()">Load from File</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPreset('facility_1_yogurt')">Preset: Yogurt Cultures</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPreset('facility_2_lacto')">Preset: Lacto/Bifido</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPreset('facility_3_bacillus')">Preset: Bacillus Spores</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPreset('facility_4_yeast')">Preset: Yeast Probiotic</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPreset('facility_5_all')">Preset: ALL IN (40 TPA)</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light me-2" onclick="exportToExcel()">
+                            <i class="bi bi-file-earmark-excel"></i> Export
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-success" onclick="runScenario()" id="runAnalysisBtn">
+                            <i class="bi bi-play-circle"></i> Run Analysis
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container with Tabs -->
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <!-- Left Sidebar Navigation -->
+            <div class="col-md-2">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#basic-tab">
+                        <i class="bi bi-info-circle"></i> Basic Setup
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#strains-tab">
+                        <i class="bi bi-virus"></i> Strains
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#equipment-tab">
+                        <i class="bi bi-cpu"></i> Equipment
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#economics-tab">
+                        <i class="bi bi-currency-dollar"></i> Economics
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#labor-tab">
+                        <i class="bi bi-people"></i> Labor
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#opex-tab">
+                        <i class="bi bi-calculator"></i> OPEX
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#capex-tab">
+                        <i class="bi bi-building"></i> CAPEX
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pricing-tab">
+                        <i class="bi bi-tags"></i> Pricing
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#optimization-tab">
+                        <i class="bi bi-sliders"></i> Optimization
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sensitivity-tab">
+                        <i class="bi bi-diagram-2"></i> Sensitivity
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#results-tab">
+                        <i class="bi bi-graph-up"></i> Results
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-10">
+                <div class="tab-content" id="v-pills-tabContent">
+                    
+                    <!-- Basic Setup Tab -->
+                    <div class="tab-pane fade show active" id="basic-tab">
+                        <h3>Basic Scenario Configuration</h3>
+                        <div class="parameter-section">
+                            <div class="parameter-header">Scenario Information</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Scenario Name</label>
+                                    <input type="text" class="form-control" id="scenarioName" value="Baseline 10 TPA Facility">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="scenarioDescription" placeholder="Optional description">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Production Target</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Target Production (TPA)</label>
+                                    <input type="number" class="form-control" id="targetTPA" value="10" min="1" step="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Operating Hours/Year</label>
+                                    <input type="number" class="form-control" id="hoursPerYear" value="8760" min="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Quality Yield (%)</label>
+                                    <input type="number" class="form-control" id="qualityYield" value="98" min="0" max="100" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Availability Settings</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Upstream Availability (%)</label>
+                                    <input type="number" class="form-control" id="upstreamAvailability" value="92" min="0" max="100" step="0.1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Downstream Availability (%)</label>
+                                    <input type="number" class="form-control" id="downstreamAvailability" value="90" min="0" max="100" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strains Tab -->
+                    <div class="tab-pane fade" id="strains-tab">
+                        <h3>Strain Management</h3>
+                        
+                        <div class="parameter-section mb-4">
+                            <div class="parameter-header">Select from Database</div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label class="form-label">Available Strains</label>
+                                    <select class="form-select" id="strainSelector">
+                                        <option value="">-- Select a strain to add --</option>
+                                    </select>
+                                    <small class="text-muted">Select from our database of pre-configured probiotic strains</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success mt-4" onclick="addSelectedStrain()">
+                                        <i class="bi bi-plus-circle"></i> Add Selected Strain
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="parameter-section mb-4">
+                            <div class="parameter-header">Or Add Custom Strain</div>
+                            <button class="btn btn-primary" onclick="addStrainRow()">
+                                <i class="bi bi-plus-circle"></i> Add Custom Strain
+                            </button>
+                        </div>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Active Strains for Simulation</div>
+                            <div id="strainsContainer">
+                                <!-- Strains will be dynamically added here -->
+                                <p class="text-muted">No strains added yet. Select from database or add a custom strain.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equipment Tab -->
+                    <div class="tab-pane fade" id="equipment-tab">
+                        <h3>Equipment Configuration</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Reactor Configuration</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Total Reactors</label>
+                                    <input type="number" class="form-control" id="reactorsTotal" value="4" min="1" max="100">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Reactor Allocation Policy</label>
+                                    <select class="form-select" id="reactorAllocationPolicy">
+                                        <option value="equal">Equal</option>
+                                        <option value="proportional">Proportional</option>
+                                        <option value="inverse_ct" selected>Inverse CT</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Base Fermenter Volume (L)</label>
+                                    <input type="number" class="form-control" id="baseFermenterVolume" value="2000" min="100" step="100">
+                                    <div class="form-text mt-2">
+                                        Working volume fraction: <span class="badge bg-secondary">80% (fixed)</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Working Volume Fraction</label>
+                                    <input type="number" class="form-control" id="workingVolumeFraction" value="0.8" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Downstream Configuration</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Total DS Lines</label>
+                                    <input type="number" class="form-control" id="dsLinesTotal" value="2" min="1" max="50">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">DS Allocation Policy</label>
+                                    <select class="form-select" id="dsAllocationPolicy">
+                                        <option value="equal">Equal</option>
+                                        <option value="proportional">Proportional</option>
+                                        <option value="inverse_ct" selected>Inverse CT</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Shared Downstream</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="sharedDownstream" checked>
+                                        <label class="form-check-label" for="sharedDownstream">Enabled</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Seed Fermenter Ratio</label>
+                                    <input type="number" class="form-control" id="seedFermenterRatio" value="0.125" min="0.05" max="0.5" step="0.025">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Volume Options for Testing</div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="form-label">Available Volume Options (L)</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="500" id="vol500">
+                                        <label class="form-check-label" for="vol500">500L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="1000" id="vol1000">
+                                        <label class="form-check-label" for="vol1000">1,000L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="2000" id="vol2000" checked>
+                                        <label class="form-check-label" for="vol2000">2,000L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="5000" id="vol5000">
+                                        <label class="form-check-label" for="vol5000">5,000L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="10000" id="vol10000">
+                                        <label class="form-check-label" for="vol10000">10,000L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="20000" id="vol20000">
+                                        <label class="form-check-label" for="vol20000">20,000L</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input volume-option" type="checkbox" value="50000" id="vol50000">
+                                        <label class="form-check-label" for="vol50000">50,000L</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economics Tab -->
+                    <div class="tab-pane fade" id="economics-tab">
+                        <h3>Economic Assumptions</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Financial Parameters</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Discount Rate (%)</label>
+                                    <input type="number" class="form-control" id="discountRate" value="10" min="0" max="30" step="0.1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tax Rate (%)</label>
+                                    <input type="number" class="form-control" id="taxRate" value="25" min="0" max="50" step="0.1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Depreciation Years</label>
+                                    <input type="number" class="form-control" id="depreciationYears" value="10" min="5" max="20">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Project Lifetime (years)</label>
+                                    <input type="number" class="form-control" id="projectLifetimeYears" value="15" min="10" max="30">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">OPEX Distribution</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Variable OPEX Share (%)</label>
+                                    <input type="number" class="form-control" id="variableOpexShare" value="85" min="0" max="100" step="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Maintenance (% of Equipment)</label>
+                                    <input type="number" class="form-control" id="maintenancePctOfEquip" value="9" min="0" max="20" step="0.5">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">G&A Scale Factor</label>
+                                    <input type="number" class="form-control" id="gaScaleFactor" value="10.84" min="0" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Labor Tab -->
+                    <div class="tab-pane fade" id="labor-tab">
+                        <h3>Labor Configuration</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Annual Salaries (USD, including 30% benefits)</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Plant Manager</label>
+                                    <input type="number" class="form-control" id="plantManagerSalary" value="104000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fermentation Specialist</label>
+                                    <input type="number" class="form-control" id="fermentationSpecialistSalary" value="39000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">DS Process Operator</label>
+                                    <input type="number" class="form-control" id="dsProcessOperatorSalary" value="52000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">General Technician</label>
+                                    <input type="number" class="form-control" id="generalTechnicianSalary" value="32500" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">QA/QC Lab Tech</label>
+                                    <input type="number" class="form-control" id="qaqcLabTechSalary" value="39000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Maintenance Tech</label>
+                                    <input type="number" class="form-control" id="maintenanceTechSalary" value="39000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Utility Operator</label>
+                                    <input type="number" class="form-control" id="utilityOperatorSalary" value="39000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Logistics Clerk</label>
+                                    <input type="number" class="form-control" id="logisticsClerkSalary" value="39000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Office Clerk</label>
+                                    <input type="number" class="form-control" id="officeClerkSalary" value="32500" min="0" step="1000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Headcount Configuration</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Minimum FTEs</label>
+                                    <input type="number" class="form-control" id="minFte" value="15" min="1" step="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Additional FTEs per TPA</label>
+                                    <input type="number" class="form-control" id="ftePerTpa" value="1" min="0" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPEX Tab -->
+                    <div class="tab-pane fade" id="opex-tab">
+                        <h3>Operating Expenses</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Utility Costs</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Electricity ($/kWh)</label>
+                                    <input type="number" class="form-control" id="electricityUsdPerKwh" value="0.107" min="0" step="0.001">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Steam ($/kg)</label>
+                                    <input type="number" class="form-control" id="steamUsdPerKg" value="0.0228" min="0" step="0.001">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Water ($/m³)</label>
+                                    <input type="number" class="form-control" id="waterUsdPerM3" value="0.002" min="0" step="0.001">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Natural Gas ($/MMBtu)</label>
+                                    <input type="number" class="form-control" id="naturalGasUsdPerMmbtu" value="3.50" min="0" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">OPEX Factors</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Raw Materials Markup Factor</label>
+                                    <input type="number" class="form-control" id="rawMaterialsMarkup" value="1.0" min="1" step="0.05">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Utilities Efficiency Factor</label>
+                                    <input type="number" class="form-control" id="utilitiesEfficiency" value="0.85" min="0.5" max="1" step="0.05">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAPEX Tab -->
+                    <div class="tab-pane fade" id="capex-tab">
+                        <h3>Capital Expenditure</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Facility Costs</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Land Cost ($/m²)</label>
+                                    <input type="number" class="form-control" id="landCostPerM2" value="500" min="0" step="10">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Building Cost ($/m²)</label>
+                                    <input type="number" class="form-control" id="buildingCostPerM2" value="2000" min="0" step="100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Equipment Costs</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Fermenter Base Cost (2000L)</label>
+                                    <input type="number" class="form-control" id="fermenterBaseCost" value="150000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fermenter Scale Exponent</label>
+                                    <input type="number" class="form-control" id="fermenterScaleExponent" value="0.6" min="0.4" max="0.8" step="0.05">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Centrifuge Cost</label>
+                                    <input type="number" class="form-control" id="centrifugeCost" value="200000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">TFF Skid Cost</label>
+                                    <input type="number" class="form-control" id="tffSkidCost" value="150000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Lyophilizer Cost ($/m²)</label>
+                                    <input type="number" class="form-control" id="lyophilizerCostPerM2" value="50000" min="0" step="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Media Tank Ratio</label>
+                                    <input type="number" class="form-control" id="mediaTankRatio" value="1.25" min="1" max="2" step="0.05">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">CAPEX Factors</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Utilities (% of Process)</label>
+                                    <input type="number" class="form-control" id="utilitiesCostFactor" value="25" min="0" max="50" step="1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Installation (% of Equipment)</label>
+                                    <input type="number" class="form-control" id="installationFactor" value="15" min="0" max="30" step="1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Contingency Factor (%)</label>
+                                    <input type="number" class="form-control" id="contingencyFactor" value="12.5" min="0" max="25" step="0.5">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Working Capital (months)</label>
+                                    <input type="number" class="form-control" id="workingCapitalMonths" value="3" min="1" max="12">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Tab -->
+                    <div class="tab-pane fade" id="pricing-tab">
+                        <h3>Pricing Tables</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Product Prices ($/kg)</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Yogurt Cultures</label>
+                                    <input type="number" class="form-control" id="priceYogurt" value="400" min="0" step="10">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Lacto/Bifido</label>
+                                    <input type="number" class="form-control" id="priceLactoBifido" value="400" min="0" step="10">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Bacillus Spores</label>
+                                    <input type="number" class="form-control" id="priceBacillus" value="400" min="0" step="10">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Sacco/Yeast</label>
+                                    <input type="number" class="form-control" id="priceSacco" value="500" min="0" step="10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Raw Material Prices ($/kg)</div>
+                            <div class="row" id="rawPricesContainer">
+                                <!-- Raw prices will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optimization Tab -->
+                    <div class="tab-pane fade" id="optimization-tab">
+                        <h3>Optimization Settings</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Optimization Configuration</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="optimizationEnabled">
+                                        <label class="form-check-label" for="optimizationEnabled">
+                                            Enable Equipment Optimization
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Simulation Type</label>
+                                    <select class="form-select" id="simulationType">
+                                        <option value="deterministic" selected>Deterministic</option>
+                                        <option value="monte_carlo">Monte Carlo</option>
+                                        <option value="stochastic">Stochastic</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Optimization Objectives</div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="npv" id="objNPV" checked>
+                                        <label class="form-check-label" for="objNPV">Maximize NPV</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="irr" id="objIRR" checked>
+                                        <label class="form-check-label" for="objIRR">Maximize IRR</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="capex" id="objCAPEX">
+                                        <label class="form-check-label" for="objCAPEX">Minimize CAPEX</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="opex" id="objOPEX">
+                                        <label class="form-check-label" for="objOPEX">Minimize OPEX</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="payback" id="objPayback">
+                                        <label class="form-check-label" for="objPayback">Minimize Payback</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Constraints</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Min TPA</label>
+                                    <input type="number" class="form-control" id="minTpa" placeholder="Optional" min="0">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Max CAPEX ($M)</label>
+                                    <input type="number" class="form-control" id="maxCapex" placeholder="Optional" min="0">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Min Utilization (%)</label>
+                                    <input type="number" class="form-control" id="minUtilization" placeholder="Optional" min="0" max="100">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Max Payback (years)</label>
+                                    <input type="number" class="form-control" id="maxPayback" placeholder="Optional" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Algorithm Settings</div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Max Evaluations</label>
+                                    <input type="number" class="form-control" id="maxEvaluations" value="100" min="10" max="10000">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Population Size</label>
+                                    <input type="number" class="form-control" id="populationSize" value="50" min="10" max="500">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Generations</label>
+                                    <input type="number" class="form-control" id="nGenerations" value="100" min="10" max="1000">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Monte Carlo Samples</label>
+                                    <input type="number" class="form-control" id="nMonteCarloSamples" value="1000" min="100" max="10000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sensitivity Tab -->
+                    <div class="tab-pane fade" id="sensitivity-tab">
+                        <h3>Sensitivity Analysis</h3>
+                        
+                        <div class="parameter-section">
+                            <div class="parameter-header">Sensitivity Configuration</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="sensitivityEnabled">
+                                        <label class="form-check-label" for="sensitivityEnabled">
+                                            Enable Sensitivity Analysis
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Delta Percentage (%)</label>
+                                    <input type="number" class="form-control" id="deltaPercentage" value="10" min="1" max="50" step="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Parameters to Analyze</div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="discount_rate" id="sensDiscountRate" checked>
+                                        <label class="form-check-label" for="sensDiscountRate">Discount Rate</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="tax_rate" id="sensTaxRate" checked>
+                                        <label class="form-check-label" for="sensTaxRate">Tax Rate</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="electricity_cost" id="sensElectricity" checked>
+                                        <label class="form-check-label" for="sensElectricity">Electricity Cost</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="product_price" id="sensProductPrice" checked>
+                                        <label class="form-check-label" for="sensProductPrice">Product Price</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="raw_material_cost" id="sensRawMaterial" checked>
+                                        <label class="form-check-label" for="sensRawMaterial">Raw Material Cost</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="labor_cost" id="sensLabor">
+                                        <label class="form-check-label" for="sensLabor">Labor Cost</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="capex" id="sensCapex">
+                                        <label class="form-check-label" for="sensCapex">CAPEX</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="yield" id="sensYield">
+                                        <label class="form-check-label" for="sensYield">Strain Yield</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parameter-section">
+                            <div class="parameter-header">Advanced Settings</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Grid Points (for Grid Search)</label>
+                                    <input type="number" class="form-control" id="gridPoints" value="5" min="2" max="20">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">MC Sensitivity Samples</label>
+                                    <input type="number" class="form-control" id="mcSensitivitySamples" value="1000" min="100" max="10000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Confidence Level (%)</label>
+                                    <input type="number" class="form-control" id="confidenceLevel" value="95" min="80" max="99.9" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Tab -->
+                    <div class="tab-pane fade" id="results-tab">
+                        <h3>Analysis Results</h3>
+                        
+                        <!-- KPI Cards -->
+                        <div class="row mb-3" id="kpiCards">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">NPV</h5>
+                                        <h3 class="text-success" id="kpiNPV">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">IRR</h5>
+                                        <h3 class="text-info" id="kpiIRR">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Payback</h5>
+                                        <h3 class="text-warning" id="kpiPayback">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Capacity</h5>
+                                        <h3 class="text-primary" id="kpiCapacity">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Result Charts -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="capacityChart"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="utilizationChart"></div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div id="capexChart"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="opexChart"></div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div id="cashFlowChart"></div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div id="tornadoChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div class="modal fade" id="progressModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Processing...</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <p class="mt-3" id="progressMessage">Initializing...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="cancelJob()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application JavaScript -->
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/sse-client.js"></script>
+    <script src="/static/js/client-id-helper.js"></script>
+    <script src="/static/js/app-comprehensive.js"></script>
+    
+    <script>
+        // Initialize comprehensive app
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing Comprehensive Bioprocess Designer...');
+            // Initialize will be handled by app-comprehensive.js
+        });
+    </script>
+</body>
+</html>
