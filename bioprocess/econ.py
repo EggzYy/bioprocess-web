@@ -379,75 +379,54 @@ def build_cash_flows(
     licensing_fixed: float = 0.0,
     licensing_royalty_rate: float = 0.0,
     variable_opex_share: float = 0.85,
-    parity_mode: bool = False,  # when True, ramp OPEX as fixed+variable
-
+    parity_mode: bool = False,
+    steady_state_kg: float = 0.0,  # Required for parity mode
     project_years: int = 12,
 ) -> List[float]:
     """
     Build cash flow projections.
-
-    Args:
-        capex: Total capital expenditure
-        annual_revenue: Revenue at steady state
-        annual_opex: Operating expenses at steady state
-        tax_rate: Corporate tax rate
-        depreciation_schedule: Annual depreciation amounts
-        ramp_up_schedule: Capacity utilization by year (0-1)
-        licensing_fixed: Fixed licensing cost
-        licensing_royalty_rate: Royalty rate on EBITDA
-        project_years: Total project years including construction
-
-    Returns:
-        List of annual cash flows
     """
     cash_flows = []
-
-    # Include licensing in CAPEX
     total_capex = capex + licensing_fixed
+
+    # Parity mode requires a different OPEX calculation method
+    if parity_mode:
+        if steady_state_kg <= 0:
+            raise ValueError("steady_state_kg must be positive for parity mode cash flow calculation.")
+        var_opex_per_kg = (variable_opex_share * annual_opex) / steady_state_kg
+        fixed_opex = (1 - variable_opex_share) * annual_opex
+    else:
+        # Modern implementation logic (can be refined later)
+        var_opex_per_kg = 0  # Not used in this path
+        fixed_opex = 0  # Not used in this path
 
     for year in range(project_years + 1):
         if year == 0:
-            # Year 0: 70% of CAPEX
             cf = -total_capex * 0.70
         elif year == 1:
-            # Year 1: 30% of CAPEX
             cf = -total_capex * 0.30
         else:
-            # Operating years
             idx = year - 2
-            if idx < len(ramp_up_schedule):
-                utilization = ramp_up_schedule[idx]
-            else:
-                utilization = ramp_up_schedule[-1] if ramp_up_schedule else 1.0
+            utilization = ramp_up_schedule[idx] if idx < len(ramp_up_schedule) else (ramp_up_schedule[-1] if ramp_up_schedule else 1.0)
 
             revenue = annual_revenue * utilization
-            # Parity-mode: split OPEX into fixed and variable for ramp, else scale all
+
             if parity_mode:
-                var_share = variable_opex_share
-                fixed_opex = annual_opex * (1.0 - var_share)
-                variable_opex = annual_opex * var_share * utilization
-                opex = fixed_opex + variable_opex
+                # Mimic original script: COGS = (ramped kg * var_opex/kg) + fixed_opex
+                # The revenue is based on actual production, but COGS ramp-up is based on target production (steady_state_kg)
+                ramped_kg = steady_state_kg * utilization
+                cogs = ramped_kg * var_opex_per_kg + fixed_opex
             else:
-                opex = annual_opex * utilization
+                # Modern mode: scale total opex by utilization
+                cogs = annual_opex * utilization
 
-            # EBITDA before royalties
-            ebitda_pre = revenue - opex
-
-            # Apply royalties
+            ebitda_pre = revenue - cogs
             royalty = max(0.0, ebitda_pre * licensing_royalty_rate)
             ebitda = ebitda_pre - royalty
 
-            # Depreciation (exclude licensing from depreciable base)
-            if idx < len(depreciation_schedule):
-                depreciation = depreciation_schedule[idx]
-            else:
-                depreciation = 0.0
-
-            # Tax calculation
+            depreciation = depreciation_schedule[idx] if idx < len(depreciation_schedule) else 0.0
             ebt = ebitda - depreciation
             tax = max(0.0, ebt * tax_rate)
-
-            # Unlevered free cash flow
             cf = ebitda - tax
 
         cash_flows.append(cf)
@@ -675,17 +654,18 @@ def calculate_economics(
 
     # Build cash flows (Year 0: -70%, Year 1: -30%)
     cash_flows = build_cash_flows(
-        total_capex - fixed_licensing,  # base CAPEX (exclude licensing from base)
-        annual_revenue,
-        total_opex,
-        assumptions.tax_rate,
-        depreciation_schedule,
-        ramp_up,
-        fixed_licensing,
-        avg_royalty_rate,
+        capex=total_capex - fixed_licensing,  # base CAPEX (exclude licensing from base)
+        annual_revenue=annual_revenue,
+        annual_opex=total_opex,
+        tax_rate=assumptions.tax_rate,
+        depreciation_schedule=depreciation_schedule,
+        ramp_up_schedule=ramp_up,
+        licensing_fixed=fixed_licensing,
+        licensing_royalty_rate=avg_royalty_rate,
         project_years=12,
         variable_opex_share=assumptions.variable_opex_share,
         parity_mode=capex_config.parity_mode,
+        steady_state_kg=target_tpa * 1000.0,  # Use target for ramp-up calculations
     )
 
     # Financial metrics
