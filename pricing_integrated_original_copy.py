@@ -19,6 +19,105 @@ out3 = "Facility3_Bacillus_Spores_10TPA_calc.xlsx"
 out4 = "Facility4_Yeast_Probiotic_10TPA_calc.xlsx"
 out5 = "Facility5_ALL_IN_40TPA_calc.xlsx"
 
+# Predefined facility scenarios mirroring the original script's examples
+FACILITY_CONFIGS = [
+    {
+        "name": "Facility 1 - Yogurt Cultures (10 TPA)",
+        "target_tpa": 10,
+        "strains": [
+            "S. thermophilus",
+            "L. delbrueckii subsp. bulgaricus",
+            "L. acidophilus",
+            "B. animalis subsp. lactis",
+        ],
+        "fermenters_suggested": 4,
+        "lyos_guess": 2,
+        "anaerobic": False,
+        "premium_spores": False,
+        "sacco": False,
+    },
+    {
+        "name": "Facility 2 - Lacto/Bifido (10 TPA)",
+        "target_tpa": 10,
+        "strains": [
+            "L. rhamnosus GG",
+            "L. casei",
+            "L. plantarum",
+            "B. breve",
+            "B. longum",
+        ],
+        "fermenters_suggested": 5,
+        "lyos_guess": 2,
+        "anaerobic": True,
+        "premium_spores": False,
+        "sacco": False,
+    },
+    {
+        "name": "Facility 3 - Bacillus Spores (10 TPA)",
+        "target_tpa": 10,
+        "strains": ["Bacillus coagulans", "Bacillus subtilis"],
+        "fermenters_suggested": 2,
+        "lyos_guess": 1,
+        "anaerobic": False,
+        "premium_spores": True,
+        "sacco": False,
+    },
+    {
+        "name": "Facility 4 - Yeast Based Probiotic (10 TPA)",
+        "target_tpa": 10,
+        "strains": ["Saccharomyces boulardii"],
+        "fermenters_suggested": 4,
+        "lyos_guess": 2,
+        "anaerobic": False,
+        "premium_spores": False,
+        "sacco": True,
+    },
+    {
+        "name": "Facility 5 - ALL IN (40 TPA)",
+        "target_tpa": 40,
+        "strains": [
+            "Saccharomyces boulardii",
+            "Bacillus coagulans",
+            "Bacillus subtilis",
+            "L. rhamnosus GG",
+            "L. casei",
+            "L. plantarum",
+            "B. breve",
+            "B. longum",
+            "S. thermophilus",
+            "L. delbrueckii subsp. bulgaricus",
+            "L. acidophilus",
+            "B. animalis subsp. lactis",
+        ],
+        "fermenters_suggested": 4,
+        "lyos_guess": 2,
+        "anaerobic": True,
+        "premium_spores": True,
+        "sacco": True,
+    },
+]
+
+OUT_FILES = [out1, out2, out3, out4, out5]
+
+def run_facility_scenario(index: int):
+    """Run a predefined facility scenario by 1-based index."""
+    cfg = FACILITY_CONFIGS[index - 1]
+    return facility_model(
+        cfg["name"],
+        target_tpa=cfg["target_tpa"],
+        strains=cfg["strains"],
+        fermenters_suggested=cfg["fermenters_suggested"],
+        lyos_guess=cfg["lyos_guess"],
+        anaerobic=cfg.get("anaerobic", False),
+        premium_spores=cfg.get("premium_spores", False),
+        sacco=cfg.get("sacco", False),
+        optimize_equipment=True,
+        use_multiobjective=True,
+        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
+        use_stochastic=False,
+        stochastic_objective="irr_p10",
+    )
+
 
 # ---------- Global assumptions (2025 USD) ----------
 ASSUMPTIONS = {
@@ -3237,102 +3336,23 @@ def write_book(path, model_dict):
 
 
 if __name__ == '__main__':
-    fac1 = facility_model(
-        "Facility 1 - Yogurt Cultures (10 TPA)",
-        target_tpa=10,
-        strains=[
-            "S. thermophilus",
-            "L. delbrueckii subsp. bulgaricus",
-            "L. acidophilus",
-            "B. animalis subsp. lactis",
-        ],
-        fermenters_suggested=4,
-        lyos_guess=2,
-        anaerobic=False,
-        premium_spores=False,
-        sacco=False,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run legacy facility scenarios")
+    parser.add_argument(
+        "--facility",
+        type=int,
+        choices=range(1, len(FACILITY_CONFIGS) + 1),
+        help="Run only the specified facility scenario (1-5)",
     )
-    fac2 = facility_model(
-        "Facility 2 - Lacto/Bifido (10 TPA)",
-        target_tpa=10,
-        strains=["L. rhamnosus GG", "L. casei", "L. plantarum", "B. breve", "B. longum"],
-        fermenters_suggested=5,
-        lyos_guess=2,
-        anaerobic=True,
-        premium_spores=False,
-        sacco=False,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
-    )
-    fac3 = facility_model(
-        "Facility 3 - Bacillus Spores (10 TPA)",
-        target_tpa=10,
-        strains=["Bacillus coagulans", "Bacillus subtilis"],
-        fermenters_suggested=2,
-        lyos_guess=1,
-        anaerobic=False,
-        premium_spores=True,
-        sacco=False,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
-    )
-    fac4 = facility_model(
-        "Facility 4 - Yeast Based Probiotic (10 TPA)",
-        target_tpa=10,
-        strains=["Saccharomyces boulardii"],
-        fermenters_suggested=4,
-        lyos_guess=2,
-        anaerobic=False,
-        premium_spores=False,
-        sacco=True,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
-    )
-    fac5 = facility_model(
-        "Facility 5 - ALL IN (40 TPA)",
-        target_tpa=40,
-        strains=[
-            "Saccharomyces boulardii",
-            "Bacillus coagulans",
-            "Bacillus subtilis",
-            "L. rhamnosus GG",
-            "L. casei",
-            "L. plantarum",
-            "B. breve",
-            "B. longum",
-            "S. thermophilus",
-            "L. delbrueckii subsp. bulgaricus",
-            "L. acidophilus",
-            "B. animalis subsp. lactis",
-        ],
-        fermenters_suggested=4,
-        lyos_guess=2,
-        anaerobic=True,
-        premium_spores=True,
-        sacco=True,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
-    )
-    write_book(out1, fac1)
-    write_book(out2, fac2)
-    write_book(out3, fac3)
-    write_book(out4, fac4)
-    write_book(out5, fac5)
-    print("Created files:", out1, out2, out3, out4, out5)
+    args = parser.parse_args()
+
+    if args.facility:
+        res = run_facility_scenario(args.facility)
+        write_book(OUT_FILES[args.facility - 1], res)
+        print(f"Created file: {OUT_FILES[args.facility - 1]}")
+    else:
+        results = [run_facility_scenario(i) for i in range(1, len(FACILITY_CONFIGS) + 1)]
+        for path, model in zip(OUT_FILES, results):
+            write_book(path, model)
+        print("Created files:", ", ".join(OUT_FILES))
