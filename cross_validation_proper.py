@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Proper Cross-Validation using original unmodified pricing_integrated_original.py
+Proper Cross-Validation using legacy pricing_integrated_original copy
 Compares with new implementation ensuring TPA constraints are enforced.
 """
 
@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 # Import original UNMODIFIED implementation from bioprocess folder in this project
-from bioprocess.pricing_integrated_original import (
+from pricing_integrated_original_copy import (
     facility_model as original_facility_model,
 )
 
