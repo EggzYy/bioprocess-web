@@ -173,7 +173,3 @@ data/*.xlsx
 !temp/.gitkeep
 !configs/.gitkeep
 !data/.gitkeep
-
-# Original files (reference only)
-bioprocess/pricing_integrated_original.py
-bioprocess/fermentation_capacity_calculator.py
