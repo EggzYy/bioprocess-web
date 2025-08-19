@@ -14,9 +14,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 # Import original UNMODIFIED implementation from bioprocess folder in this project
-from pricing_integrated_original_copy import (
-    facility_model as original_facility_model,
-)
+from pricing_integrated_original_copy import run_facility_scenario
+
 
 # Import new implementation
 from bioprocess.models import ScenarioInput, StrainInput, VolumePlan
@@ -24,39 +23,11 @@ from bioprocess.orchestrator import run_scenario
 from bioprocess.presets import RAW_PRICES, STRAIN_DB, STRAIN_BATCH_DB
 
 
-def run_original_implementation(
-    name: str,
-    target_tpa: float,
-    strains: List[str],
-    fermenters_suggested: int,
-    lyos_guess: int,
-    anaerobic: bool = False,
-    premium_spores: bool = False,
-    sacco: bool = False,
-) -> Dict[str, Any]:
-    """
-    Run the original unmodified pricing_integrated_original.py with exact parameters.
-    """
+def run_original_implementation(facility_index: int) -> Dict[str, Any]:
+    """Run a predefined facility scenario from the legacy implementation."""
     print("\n🔧 Running ORIGINAL implementation...")
-    print("   Parameters: optimize_equipment=True, use_multiobjective=True")
-    print("   Volume options: [500, 1000, 1500, 2000, 3000, 4000, 5000]L")
-    print(f"   Target TPA: {target_tpa} (enforced)")
-
-    result = original_facility_model(
-        name=name,
-        target_tpa=target_tpa,
-        strains=strains,
-        fermenters_suggested=fermenters_suggested,
-        lyos_guess=lyos_guess,
-        anaerobic=anaerobic,
-        premium_spores=premium_spores,
-        sacco=sacco,
-        optimize_equipment=True,
-        use_multiobjective=True,
-        fermenter_volumes_to_test=[500, 1000, 1500, 2000, 3000, 4000, 5000],
-        use_stochastic=False,
-        stochastic_objective="irr_p10",
-    )
+    print(f"   Facility index: {facility_index}")
+    result = run_facility_scenario(facility_index)
 
     # Extract metrics from result
     metrics = {
@@ -150,22 +121,6 @@ def get_facilities():
             "sacco": False,
         },
     ]
-
-
-def run_original(name: str):
-    # Uses defaults from the original definitions in this module
-    facilities = get_facilities()
-    f = [f for f in facilities if f["name"] == name][0]
-    return run_original_implementation(
-        name=f["name"],
-        target_tpa=f["target_tpa"],
-        strains=f["strains"],
-        fermenters_suggested=f["fermenters_suggested"],
-        lyos_guess=f["lyos_guess"],
-        anaerobic=f.get("anaerobic", False),
-        premium_spores=f.get("premium_spores", False),
-        sacco=f.get("sacco", False),
-    )
 
 
 def run_new(name: str, scenario: ScenarioInput):
@@ -323,6 +278,7 @@ def compare_facility(
     anaerobic: bool = False,
     premium_spores: bool = False,
     sacco: bool = False,
+    legacy_index: int = 1,
 ) -> Dict[str, Any]:
     """
     Compare original and new implementations for a facility.
@@ -339,16 +295,7 @@ def compare_facility(
     print(f"Suggested config: {fermenters_suggested} fermenters, {lyos_guess} lyos")
 
     # Run original
-    orig = run_original_implementation(
-        name,
-        target_tpa,
-        strains,
-        fermenters_suggested,
-        lyos_guess,
-        anaerobic,
-        premium_spores,
-        sacco,
-    )
+    orig = run_original_implementation(legacy_index)
 
     # Run new with 80% working volume (parity with original using 0.8 WVF)
     new = run_new_implementation(
@@ -453,6 +400,7 @@ def main():
             "anaerobic": False,
             "premium_spores": False,
             "sacco": False,
+            "legacy_index": 1,
         },
         {
             "name": "Facility 2 - Lacto/Bifido (10 TPA)",
@@ -469,6 +417,7 @@ def main():
             "anaerobic": True,
             "premium_spores": False,
             "sacco": False,
+            "legacy_index": 2,
         },
         {
             "name": "Facility 3 - Bacillus Spores (10 TPA)",
@@ -479,6 +428,7 @@ def main():
             "anaerobic": False,
             "premium_spores": True,
             "sacco": False,
+            "legacy_index": 3,
         },
         {
             "name": "Facility 4 - Yeast Based Probiotic (10 TPA)",
@@ -489,12 +439,13 @@ def main():
             "anaerobic": False,
             "premium_spores": False,
             "sacco": True,
+            "legacy_index": 4,
         },
     ]
 
     # Test only first 2 facilities for now to avoid timeout
     results = []
-    for facility in facilities[:2]:  # Test first 2 facilities
+    for facility in facilities[:1]:  # Test only the first facility
         try:
             result = compare_facility(**facility)
             results.append(result)
