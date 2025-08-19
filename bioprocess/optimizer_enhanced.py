@@ -259,19 +259,15 @@ def optimize_with_capacity_enforcement(
             if not constrained.empty:
                 feasible_df = constrained
                 break
-            if feasible_df is None:
-                # Fall back to solution with minimum excess that still meets capacity
-                best_idx = meets_capacity_df["excess_ratio"].idxmin()
-                best_solution = meets_capacity_df.loc[best_idx].to_dict()
-                best_solution["warning"] = (
-                    f"Could not meet progressive excess limits up to 25%. "
-                    f"Minimum achievable: {best_solution['excess_ratio']:.1%}"
-                )
-                return best_solution, all_results_df
-        else:
-            feasible_df = meets_capacity_df
-    else:
-        feasible_df = all_results_df.copy()
+    if feasible_df is None:
+        # Fall back to solution with minimum excess that still meets capacity
+        best_idx = meets_capacity_df["excess_ratio"].idxmin()
+        best_solution = meets_capacity_df.loc[best_idx].to_dict()
+        best_solution["warning"] = (
+            f"Could not meet progressive excess limits up to 25%. "
+            f"Minimum achievable: {best_solution['excess_ratio']:.1%}"
+        )
+        return best_solution, all_results_df
 
     if feasible_df.empty:
         # This shouldn't happen given the logic above, but keep as safety
