@@ -11,27 +11,27 @@ These tasks are essential to make the application usable. The goal is to connect
 ### 1. Complete Frontend JavaScript Integration
 - **Goal:** Wire up the main user interface to the backend API endpoints.
 - **Tasks:**
-    - [ ] **Connect API Client:** Implement a robust API client in JavaScript to handle all communication with the backend.
-    - [ ] **Implement Form Submission:** Write handlers for all forms (e.g., scenario definition, optimization parameters) to gather user input and send it to the appropriate API endpoint (`/api/scenarios/run`).
-    - [ ] **Handle API Responses:** Process successful responses from the backend and display the results (KPIs, charts, tables) in the UI.
-    - [ ] **Implement Progress Tracking:** For long-running operations (like optimization), use the WebSocket endpoint (`/api/ws/sse/{client_id}`) to show real-time progress to the user.
-    - [ ] **Error Handling:** Implement user-friendly error messages when the API returns an error.
+    - [x] **Connect API Client:** Implement a robust API client in JavaScript to handle all communication with the backend.
+    - [x] **Implement Form Submission:** Write handlers for all forms (e.g., scenario definition, optimization parameters) to gather user input and send it to the appropriate API endpoint (`/api/scenarios/run`).
+    - [x] **Handle API Responses:** Process successful responses from the backend and display the results (KPIs, charts, tables) in the UI.
+    - [x] **Implement Progress Tracking:** For long-running operations (like optimization), use the WebSocket endpoint (`/api/ws/sse/{client_id}`) to show real-time progress to the user.
+    - [x] **Error Handling:** Implement user-friendly error messages when the API returns an error.
 
 ### 2. Fix Frontend Strain Management
 - **Goal:** Make the strain management modal fully functional.
 - **Tasks:**
-    - [ ] **CRUD Functionality:** Implement the "add", "edit", and "delete" functionality for strains, connecting them to the relevant backend endpoints.
-    - [ ] **Strain Selection:** Allow users to select from a list of existing strains in the database when creating a new scenario.
-    - [ ] **Dynamic Table Updates:** Ensure the strain table in the UI updates automatically after any changes.
-    - [ ] **Form Validation:** Add client-side validation to the strain input forms to prevent invalid data from being sent to the backend.
+    - [x] **CRUD Functionality:** Implement the "add", "edit", and "delete" functionality for strains, connecting them to the relevant backend endpoints.
+    - [x] **Strain Selection:** Allow users to select from a list of existing strains in the database when creating a new scenario.
+    - [x] **Dynamic Table Updates:** Ensure the strain table in the UI updates automatically after any changes.
+    - [x] **Form Validation:** Add client-side validation to the strain input forms to prevent invalid data from being sent to the backend.
 
 ### 3. Connect Charts and Dashboards to Real Data
 - **Goal:** Replace placeholder data in charts with live data from the backend.
 - **Tasks:**
-    - [ ] **Wire up Chart Rendering:** Connect the existing Plotly.js chart functions in `charts.js` to the data returned by the API.
-    - [ ] **Dashboard Layout:** Finalize the layout of the main results dashboard, ensuring all key charts (e.g., Pareto front, cash flow) and KPIs are displayed clearly.
-    - [ ] **Chart Interactivity:** Enable chart interactivity features like zooming, panning, and exporting as PNG.
-    - [ ] **Responsive Design:** Ensure charts and dashboards are responsive and display correctly on different screen sizes.
+    - [x] **Wire up Chart Rendering:** Connect the existing Plotly.js chart functions in `charts.js` to the data returned by the API.
+    - [x] **Dashboard Layout:** Finalize the layout of the main results dashboard, ensuring all key charts (e.g., Pareto front, cash flow) and KPIs are displayed clearly.
+    - [x] **Chart Interactivity:** Enable chart interactivity features like zooming, panning, and exporting as PNG.
+    - [x] **Responsive Design:** Ensure charts and dashboards are responsive and display correctly on different screen sizes.
 
 ---
 

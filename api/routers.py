@@ -467,6 +467,57 @@ async def delete_configuration(name: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+from bioprocess.models import StrainInput
+
+
+STRAIN_DB_FILE = Path(__file__).parent.parent / "data" / "strains.json"
+
+def _load_strains_from_db() -> List[StrainInput]:
+    if not STRAIN_DB_FILE.exists():
+        return []
+    with open(STRAIN_DB_FILE, "r") as f:
+        data = json.load(f)
+        return [StrainInput(**item) for item in data]
+
+def _save_strains_to_db(strains: List[StrainInput]):
+    with open(STRAIN_DB_FILE, "w") as f:
+        json.dump([s.model_dump() for s in strains], f, indent=2)
+
+@router.post("/strains", status_code=201, response_model=StrainInput)
+async def add_strain(strain: StrainInput):
+    """Add a new strain to the database."""
+    strains = _load_strains_from_db()
+    if any(s.name == strain.name for s in strains):
+        raise HTTPException(status_code=409, detail="Strain with this name already exists")
+    strains.append(strain)
+    _save_strains_to_db(strains)
+    return strain
+
+@router.put("/strains/{strain_name}", response_model=StrainInput)
+async def update_strain(strain_name: str, strain: StrainInput):
+    """Update an existing strain."""
+    if strain_name != strain.name:
+        raise HTTPException(status_code=400, detail="Strain name in path does not match body")
+    strains = _load_strains_from_db()
+    for i, s in enumerate(strains):
+        if s.name == strain_name:
+            strains[i] = strain
+            _save_strains_to_db(strains)
+            return strain
+    raise HTTPException(status_code=404, detail="Strain not found")
+
+@router.delete("/strains/{strain_name}", status_code=204)
+async def delete_strain(strain_name: str):
+    """Delete a strain."""
+    strains = _load_strains_from_db()
+    original_len = len(strains)
+    strains = [s for s in strains if s.name != strain_name]
+    if len(strains) == original_len:
+        raise HTTPException(status_code=404, detail="Strain not found")
+    _save_strains_to_db(strains)
+    return
+
+
 # Strain database endpoints
 @router.get("/strains", response_model=StrainDatabaseResponse)
 async def get_strains(

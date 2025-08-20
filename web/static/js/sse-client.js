@@ -145,7 +145,7 @@ class SSEClient {
         const { operation_id, progress, message, details } = data;
         
         // Update progress UI
-        this.updateProgressBar(operation_id, progress, message);
+        // this.updateProgressBar(operation_id, progress, message);
         
         // Call registered callback
         const callback = this.progressCallbacks.get(operation_id);
@@ -331,7 +331,7 @@ class SSEClient {
         }
         
         // Show progress UI
-        this.showProgressBar(operationId, type);
+        // this.showProgressBar(operationId, type);
         
         return operationId;
     }
