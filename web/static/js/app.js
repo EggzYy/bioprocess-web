@@ -2,6 +2,10 @@
  * Bioprocess Web Application - Main JavaScript
  */
 
+// SSE Client
+const sseClient = new SSEClient();
+const chartManager = new ChartManager();
+
 // API Configuration
 const API_BASE_URL = '/api';
 
@@ -171,6 +175,26 @@ class APIClient {
             })
         });
     }
+
+    static async addStrain(strain) {
+        return this.request('/strains', {
+            method: 'POST',
+            body: JSON.stringify(strain)
+        });
+    }
+
+    static async updateStrain(strainName, strain) {
+        return this.request(`/strains/${strainName}`, {
+            method: 'PUT',
+            body: JSON.stringify(strain)
+        });
+    }
+
+    static async deleteStrain(strainName) {
+        return this.request(`/strains/${strainName}`, {
+            method: 'DELETE'
+        });
+    }
 }
 
 // UI Helper Functions
@@ -269,25 +293,15 @@ async function runScenario() {
             return;
         }
         
-        showProgress(0.1, 'Submitting scenario...');
+        showProgress(0.05, 'Submitting scenario...'); // Show initial progress
         
-        // Run scenario
-        const response = await APIClient.runScenario(scenario);
-        
-        if (response.result) {
-            AppState.lastResult = response.result;
-            displayResults(response.result);
-            showSuccess('Analysis completed successfully');
-        } else {
-            showError('Analysis failed: No results returned');
-        }
-        
-        hideProgress();
+        // The sseClient will handle the rest of the progress updates and the final result.
+        await sseClient.runScenarioWithProgress(scenario);
         
     } catch (error) {
-        console.error('Error running scenario:', error);
+        console.error('Error starting scenario:', error);
         hideProgress();
-        showError('Failed to run scenario: ' + error.message);
+        showError('Failed to start scenario: ' + error.message);
     }
 }
 
@@ -306,187 +320,72 @@ function displayResults(result) {
         document.getElementById('kpiCapacity').textContent = `${result.kpis.tpa?.toFixed(1) || 0} TPA`;
     }
     
-    // Display capacity details
-    if (result.capacity) {
-        displayCapacityResults(result.capacity);
-    }
-    
-    // Display economics
-    if (result.economics) {
-        displayEconomicsResults(result.economics);
-    }
-    
-    // Display equipment
-    if (result.equipment) {
-        displayEquipmentResults(result.equipment);
-    }
-}
-
-function displayCapacityResults(capacity) {
-    const table = document.getElementById('capacityTable');
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Metric</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Total Feasible Batches</td>
-                <td>${capacity.total_feasible_batches?.toFixed(0) || 0}</td>
-            </tr>
-            <tr>
-                <td>Good Batches (after QY)</td>
-                <td>${capacity.total_good_batches?.toFixed(0) || 0}</td>
-            </tr>
-            <tr>
-                <td>Annual Production</td>
-                <td>${formatNumber(capacity.total_annual_kg)} kg</td>
-            </tr>
-            <tr>
-                <td>Upstream Utilization</td>
-                <td>${formatPercent(capacity.weighted_up_utilization)}</td>
-            </tr>
-            <tr>
-                <td>Downstream Utilization</td>
-                <td>${formatPercent(capacity.weighted_ds_utilization)}</td>
-            </tr>
-            <tr>
-                <td>Bottleneck</td>
-                <td><span class="badge bg-warning">${capacity.bottleneck}</span></td>
-            </tr>
-        </tbody>
-    `;
-}
-
-function displayEconomicsResults(economics) {
-    // Create CAPEX pie chart
-    const capexData = [{
-        values: [
-            economics.land_cost,
-            economics.building_cost,
-            economics.equipment_cost,
-            economics.contingency,
-            economics.working_capital
-        ],
-        labels: ['Land', 'Building', 'Equipment', 'Contingency', 'Working Capital'],
-        type: 'pie',
-        hole: 0.4
-    }];
-    
-    const capexLayout = {
-        title: 'CAPEX Breakdown',
-        height: 400
-    };
-    
-    Plotly.newPlot('capexChart', capexData, capexLayout);
-    
-    // Create OPEX pie chart
-    const opexData = [{
-        values: [
-            economics.raw_materials_cost,
-            economics.utilities_cost,
-            economics.labor_cost,
-            economics.maintenance_cost,
-            economics.ga_other_cost
-        ],
-        labels: ['Raw Materials', 'Utilities', 'Labor', 'Maintenance', 'G&A/Other'],
-        type: 'pie',
-        hole: 0.4
-    }];
-    
-    const opexLayout = {
-        title: 'OPEX Breakdown',
-        height: 400
-    };
-    
-    Plotly.newPlot('opexChart', opexData, opexLayout);
-    
-    // Create cash flow chart
-    if (economics.cash_flows && economics.cash_flows.length > 0) {
-        const years = Array.from({length: economics.cash_flows.length}, (_, i) => i);
-        const cashFlowData = [{
-            x: years,
-            y: economics.cash_flows,
-            type: 'bar',
-            marker: {
-                color: economics.cash_flows.map(v => v >= 0 ? 'green' : 'red')
-            }
-        }];
-        
-        const cashFlowLayout = {
-            title: 'Cash Flow Over Time',
-            xaxis: { title: 'Year' },
-            yaxis: { title: 'Cash Flow ($)' },
-            height: 400
-        };
-        
-        Plotly.newPlot('cashFlowChart', cashFlowData, cashFlowLayout);
-    }
-}
-
-function displayEquipmentResults(equipment) {
-    const table = document.getElementById('equipmentTable');
-    
-    if (equipment.counts) {
-        const rows = Object.entries(equipment.counts).map(([key, value]) => 
-            `<tr><td>${formatLabel(key)}</td><td>${value}</td></tr>`
-        ).join('');
-        
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Equipment Type</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        `;
-    }
-    
-    // Equipment cost breakdown
-    if (equipment.equipment_cost) {
-        const data = [{
-            values: [
-                equipment.equipment_cost,
-                equipment.installation_cost,
-                equipment.utilities_cost
-            ],
-            labels: ['Equipment', 'Installation', 'Utilities'],
-            type: 'pie'
-        }];
-        
-        const layout = {
-            title: 'Equipment Cost Breakdown',
-            height: 400
-        };
-        
-        Plotly.newPlot('equipmentChart', data, layout);
-    }
+    // Use ChartManager to display all charts
+    chartManager.updateAllCharts(result);
 }
 
 // Strain Management
-function showStrainModal() {
-    const modal = new bootstrap.Modal(document.getElementById('strainModal'));
+function showStrainModal(strainToEdit = null) {
+    const modalEl = document.getElementById('strainModal');
+    const modal = new bootstrap.Modal(modalEl);
+
+    // Add hidden fields if they don't exist
+    if (!document.getElementById('strainModal-isEditMode')) {
+        const hiddenFields = `
+            <input type="hidden" id="strainModal-isEditMode">
+            <input type="hidden" id="strainModal-originalName">
+        `;
+        modalEl.querySelector('.modal-body').insertAdjacentHTML('beforeend', hiddenFields);
+    }
+
+    const isEditModeInput = document.getElementById('strainModal-isEditMode');
+    const originalNameInput = document.getElementById('strainModal-originalName');
+    const title = modalEl.querySelector('.modal-title');
+
+    if (strainToEdit) {
+        title.textContent = 'Edit Strain';
+        isEditModeInput.value = 'true';
+        originalNameInput.value = strainToEdit.name;
+
+        document.getElementById('strainName').value = strainToEdit.name;
+        document.getElementById('strainYield').value = strainToEdit.yield_g_per_L;
+        document.getElementById('strainFermTime').value = strainToEdit.fermentation_time_h;
+        document.getElementById('strainTurnTime').value = strainToEdit.turnaround_time_h;
+        document.getElementById('strainDSTime').value = strainToEdit.downstream_time_h;
+        document.getElementById('strainMediaCost').value = strainToEdit.media_cost_usd;
+        document.getElementById('strainCryoCost').value = strainToEdit.cryo_cost_usd;
+    } else {
+        title.textContent = 'Add Strain';
+        isEditModeInput.value = 'false';
+        originalNameInput.value = '';
+        // Clear form fields
+        modalEl.querySelectorAll('input[type="text"], input[type="number"], select').forEach(el => {
+            if (el.id !== 'strainName') el.value = '';
+        });
+        document.getElementById('strainName').value = '';
+    }
+
     modal.show();
 }
 
 function loadStrainDefaults() {
     const strainName = document.getElementById('strainName').value;
-    const defaults = STRAIN_DEFAULTS[strainName];
+    const strainData = AppState.strainDatabase.find(s => s.name === strainName);
     
-    if (defaults) {
-        document.getElementById('strainYield').value = defaults.yield_g_per_L;
-        document.getElementById('strainFermTime').value = defaults.fermentation_time_h;
-        document.getElementById('strainTurnTime').value = defaults.turnaround_time_h;
-        document.getElementById('strainDSTime').value = defaults.downstream_time_h;
-        document.getElementById('strainMediaCost').value = defaults.media_cost_usd;
-        document.getElementById('strainCryoCost').value = defaults.cryo_cost_usd;
+    if (strainData) {
+        document.getElementById('strainYield').value = strainData.yield_g_per_L || '';
+        document.getElementById('strainFermTime').value = strainData.fermentation_time_h || '';
+        document.getElementById('strainTurnTime').value = strainData.turnaround_time_h || '';
+        document.getElementById('strainDSTime').value = strainData.downstream_time_h || '';
+        document.getElementById('strainMediaCost').value = strainData.media_cost_usd || '';
+        document.getElementById('strainCryoCost').value = strainData.cryo_cost_usd || '';
     }
 }
 
-function saveStrain() {
+async function saveStrain() {
+    const isEditMode = document.getElementById('strainModal-isEditMode').value === 'true';
+    const originalName = document.getElementById('strainModal-originalName').value;
+
     const strain = {
         name: document.getElementById('strainName').value,
         yield_g_per_L: parseFloat(document.getElementById('strainYield').value),
@@ -495,7 +394,7 @@ function saveStrain() {
         downstream_time_h: parseFloat(document.getElementById('strainDSTime').value),
         media_cost_usd: parseFloat(document.getElementById('strainMediaCost').value),
         cryo_cost_usd: parseFloat(document.getElementById('strainCryoCost').value),
-        utility_rate_ferm_kw: 300,  // Default values
+        utility_rate_ferm_kw: 300,
         utility_rate_cent_kw: 15,
         utility_rate_lyo_kw: 1.5,
         utility_cost_steam: 0.0228,
@@ -505,28 +404,48 @@ function saveStrain() {
         cv_turn: 0.1,
         cv_down: 0.1
     };
-    
+
+    // Client-side validation
     if (!strain.name) {
-        showError('Please select a strain name');
+        showError('Strain name is required.');
         return;
     }
-    
-    // Add to state
-    AppState.scenario.strains.push(strain);
-    
-    // Update UI
-    updateStrainList();
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('strainModal'));
-    modal.hide();
-    
-    // Clear form
-    document.getElementById('strainModal').querySelectorAll('input, select').forEach(el => {
-        el.value = '';
-    });
-    
-    showSuccess(`Strain ${strain.name} added successfully`);
+    const requiredNumericFields = [
+        'yield_g_per_L', 'fermentation_time_h', 'turnaround_time_h',
+        'downstream_time_h', 'media_cost_usd', 'cryo_cost_usd'
+    ];
+    for (const field of requiredNumericFields) {
+        if (isNaN(strain[field]) || strain[field] < 0) {
+            const friendlyName = field.replace(/_/g, ' ').replace('_usd', ' ($)').replace(' g per l', ' (g/L)').replace(' h', ' (h)');
+            showError(`Invalid input: ${friendlyName} must be a non-negative number.`);
+            return;
+        }
+    }
+
+    try {
+        if (isEditMode) {
+            await APIClient.updateStrain(originalName, strain);
+            const index = AppState.scenario.strains.findIndex(s => s.name === originalName);
+            if (index > -1) {
+                AppState.scenario.strains[index] = strain;
+            }
+            showSuccess(`Strain ${strain.name} updated successfully`);
+        } else {
+            await APIClient.addStrain(strain);
+            AppState.scenario.strains.push(strain);
+            showSuccess(`Strain ${strain.name} added successfully`);
+        }
+
+        await refreshStrains(); // Refreshes DB strains and dropdown
+        updateStrainList(); // Re-renders the scenario strain list
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('strainModal'));
+        modal.hide();
+
+    } catch (error) {
+        console.error('Error saving strain:', error);
+        showError(`Failed to save strain: ${error.message}`);
+    }
 }
 
 function updateStrainList() {
@@ -538,17 +457,19 @@ function updateStrainList() {
     }
     
     listEl.innerHTML = AppState.scenario.strains.map((strain, index) => `
-        <div class="list-group-item">
+        <div class="list-group-item d-flex justify-content-between align-items-center">
             <div class="strain-info">
                 <div class="strain-name">${strain.name}</div>
                 <div class="strain-details">
                     Yield: ${strain.yield_g_per_L} g/L | 
-                    Ferm: ${strain.fermentation_time_h}h | 
-                    Cost: $${strain.media_cost_usd}
+                    Ferm: ${strain.fermentation_time_h}h
                 </div>
             </div>
             <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-danger" onclick="removeStrain(${index})">
+                <button class="btn btn-outline-secondary" onclick='editStrain(${index})'>
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-danger" onclick='deleteStrain("${strain.name}")'>
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
@@ -556,62 +477,62 @@ function updateStrainList() {
     `).join('');
 }
 
+function editStrain(index) {
+    const strain = AppState.scenario.strains[index];
+    if (!strain) return;
+
+    // We need to find the full strain object from the database to edit it
+    const strainData = AppState.strainDatabase.find(s => s.name === strain.name);
+    showStrainModal(strainData || strain);
+}
+
+async function deleteStrain(strainName) {
+    if (!confirm(`Are you sure you want to delete the strain "${strainName}"? This cannot be undone.`)) {
+        return;
+    }
+
+    try {
+        await APIClient.deleteStrain(strainName);
+        showSuccess(`Strain "${strainName}" deleted successfully.`);
+        
+        // Remove from scenario list if it's there
+        AppState.scenario.strains = AppState.scenario.strains.filter(s => s.name !== strainName);
+
+        await refreshStrains(); // Refreshes DB strains and dropdown
+        updateStrainList(); // Re-renders the scenario strain list
+
+    } catch (error) {
+        console.error(`Error deleting strain ${strainName}:`, error);
+        showError(`Failed to delete strain: ${error.message}`);
+    }
+}
+
+async function refreshStrains() {
+    try {
+        const response = await APIClient.getStrains();
+        const allStrains = response.strains.map(s => ({...s.data, name: s.name}));
+        
+        AppState.strainDatabase = allStrains;
+        populateStrainDropdown(allStrains);
+
+    } catch (error) {
+        console.error('Error refreshing strains:', error);
+        showError('Could not refresh strain list from server.');
+    }
+}
+
 function removeStrain(index) {
-    AppState.scenario.strains.splice(index, 1);
+    // This function is now more complex. We need to decide if we are removing from the scenario or deleting from DB.
+    // For now, let's just remove from scenario. Deleting from DB is handled by deleteStrain.
+    const removed = AppState.scenario.strains.splice(index, 1);
     updateStrainList();
-    showSuccess('Strain removed');
+    showSuccess(`Strain ${removed[0].name} removed from scenario.`);
 }
 
 // Sensitivity Analysis
 async function runSensitivity() {
-    if (!AppState.lastResult) {
-        showError('Please run a scenario first before sensitivity analysis');
-        return;
-    }
-    
-    try {
-        showProgress(0.1, 'Running sensitivity analysis...');
-        
-        const scenario = collectScenarioData();
-        const parameters = ['discount_rate', 'tax_rate', 'electricity_cost'];
-        
-        const response = await APIClient.runSensitivity(scenario, parameters);
-        
-        if (response.job_id) {
-            // Poll for results
-            AppState.currentJobId = response.job_id;
-            pollJobStatus(response.job_id);
-        }
-        
-    } catch (error) {
-        console.error('Error running sensitivity:', error);
-        hideProgress();
-        showError('Failed to run sensitivity analysis');
-    }
-}
-
-async function pollJobStatus(jobId) {
-    try {
-        const status = await APIClient.getJobStatus(jobId);
-        
-        if (status.status === 'completed') {
-            hideProgress();
-            if (status.result && status.result.sensitivity) {
-                displaySensitivityResults(status.result.sensitivity);
-            }
-            showSuccess('Sensitivity analysis completed');
-        } else if (status.status === 'failed') {
-            hideProgress();
-            showError('Sensitivity analysis failed: ' + (status.error || 'Unknown error'));
-        } else {
-            // Continue polling
-            showProgress(status.progress || 0.5, status.message || 'Processing...');
-            setTimeout(() => pollJobStatus(jobId), 2000);
-        }
-    } catch (error) {
-        console.error('Error polling job:', error);
-        hideProgress();
-    }
+    // This function needs to be refactored to use the SSE client.
+    showError("Sensitivity analysis is not yet implemented with the new SSE client.");
 }
 
 function displaySensitivityResults(sensitivity) {
@@ -706,6 +627,34 @@ function formatLabel(key) {
 document.addEventListener('DOMContentLoaded', async () => {
     // Initialize UI
     updateStrainList();
+
+    // Connect SSE client
+    sseClient.connect();
+
+    // Handle SSE events
+    sseClient.on('progress', (data) => {
+        console.log('Progress:', data);
+        const progressPercentage = (data.current_step || 0) / (data.total_steps || 10);
+        showProgress(progressPercentage, data.message);
+    });
+
+    sseClient.on('result', (data) => {
+        console.log('Result:', data);
+        hideProgress();
+        if (data.result) {
+            AppState.lastResult = data.result;
+            displayResults(data.result);
+            showSuccess('Analysis completed successfully');
+        } else {
+            showError('Analysis failed: No results returned');
+        }
+    });
+
+    sseClient.on('operation_error', (data) => {
+        console.error('Operation Error:', data);
+        hideProgress();
+        showError(`Analysis failed: ${data.error}`);
+    });
     
     // Load default data from API
     try {

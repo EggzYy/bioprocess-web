@@ -611,24 +611,34 @@ def get_strain_info(strain_name: str) -> Dict[str, Any]:
 
 
 def get_all_strains() -> Dict[str, Dict[str, Any]]:
-    """Get dictionary of all available strains with their data."""
+    """Get dictionary of all available strains with their data, including custom strains."""
+    import json
+    from pathlib import Path
+
+    # Load hardcoded strains
     result = {}
-    # Get all unique strain names from both databases
     all_strain_names = set(STRAIN_DB.keys()) | set(STRAIN_BATCH_DB.keys())
-
     for strain_name in all_strain_names:
-        # Start with empty dict
         strain_data = {}
-
-        # Add data from STRAIN_DB if exists
         if strain_name in STRAIN_DB:
             strain_data.update(STRAIN_DB[strain_name])
-
-        # Add/merge data from STRAIN_BATCH_DB if exists
         if strain_name in STRAIN_BATCH_DB:
             strain_data.update(STRAIN_BATCH_DB[strain_name])
-
         result[strain_name] = strain_data
+
+    # Load custom strains from JSON and merge them
+    strain_db_file = Path(__file__).parent.parent / "data" / "strains.json"
+    if strain_db_file.exists():
+        with open(strain_db_file, "r") as f:
+            try:
+                custom_strains_list = json.load(f)
+                for strain_data in custom_strains_list:
+                    if 'name' in strain_data:
+                        # Custom strains overwrite hardcoded ones with the same name
+                        result[strain_data['name']] = strain_data
+            except json.JSONDecodeError:
+                # File might be empty or malformed, ignore for now
+                pass
 
     return result
 
