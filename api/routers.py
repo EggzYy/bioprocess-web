@@ -2,7 +2,7 @@
 API router endpoints for the bioprocess web application.
 """
 
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from uuid import uuid4
 from datetime import datetime
 import json
