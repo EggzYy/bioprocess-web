@@ -6,7 +6,7 @@
 // API Configuration
 const API_BASE_URL = window.location.origin;
 const API_ENDPOINTS = {
-    runScenario: '/api/scenarios/run',
+    runScenario: '/api/scenarios/run',  // Back to original endpoint
     batchRun: '/api/scenarios/batch',
     sensitivity: '/api/sensitivity/run',
     optimize: '/api/optimization/run',
@@ -270,94 +270,176 @@ function collectFormData() {
     
     scenario.strains = strains;
 
-    // Collect volumes
+    // Collect volume options from checkboxes
+    const volumeOptions = [];
+    document.querySelectorAll('.volume-option:checked').forEach(checkbox => {
+        volumeOptions.push(parseFloat(checkbox.value));
+    });
+    
+    console.log('Volume checkboxes found:', document.querySelectorAll('.volume-option').length);
+    console.log('Volume checkboxes checked:', document.querySelectorAll('.volume-option:checked').length);
+    console.log('Volume options collected:', volumeOptions);
+    
+    // Always ensure we have at least one volume option
+    const baseFermenterVol = parseFloat(document.getElementById('baseFermenterVolume')?.value) || 2000;
+    
+    // If no checkboxes are selected, use the base fermenter volume
+    if (volumeOptions.length === 0) {
+        volumeOptions.push(baseFermenterVol);
+        console.log('No volume checkboxes selected, using base fermenter volume:', baseFermenterVol);
+    }
+    
     scenario.volumes = {
-        seed_volume_l: parseFloat(document.querySelector('[name="seed_volume"]')?.value) || 200,
-        production_volume_l: parseFloat(document.querySelector('[name="production_volume"]')?.value) || 2000,
-        base_fermenter_vol_l: parseFloat(document.querySelector('[name="fermenter_volume"]')?.value) || 2500,
-        working_volume_fraction: parseFloat((document.querySelector('input[name="workingVolPro"]:checked')||{}).value || '0.8')
+        base_fermenter_vol_l: volumeOptions[0], // Use the first selected volume as base
+        volume_options_l: volumeOptions,
+        working_volume_fraction: parseFloat(document.getElementById('workingVolumeFraction')?.value) || 0.8,
+        seed_fermenter_ratio: parseFloat(document.getElementById('seedFermenterRatio')?.value) || 0.125,
+        media_tank_ratio: parseFloat(document.getElementById('mediaTankRatio')?.value) || 1.25
     };
     
+    console.log('Final volumes config:', scenario.volumes);
+    
     // Collect equipment parameters
+    const reactorsTotal = document.getElementById('reactorsTotal');
+    const dsLinesTotal = document.getElementById('dsLinesTotal');
+    console.log('Equipment form elements found:', {
+        reactorsTotal: reactorsTotal?.value,
+        dsLinesTotal: dsLinesTotal?.value
+    });
+    
     scenario.equipment = {
-        reactors_total: parseInt(document.querySelector('[name="reactors_total"]')?.value) || 4,
-        ds_lines_total: parseInt(document.querySelector('[name="ds_lines_total"]')?.value) || 2,
-        upstream_availability: parseFloat(document.querySelector('[name="upstream_availability"]')?.value) || 0.92,
-        downstream_availability: parseFloat(document.querySelector('[name="downstream_availability"]')?.value) || 0.90,
-        quality_yield: parseFloat(document.querySelector('[name="quality_yield"]')?.value) || 0.98
+        reactors_total: parseInt(reactorsTotal?.value) || 4,
+        ds_lines_total: parseInt(dsLinesTotal?.value) || 2,
+        reactor_allocation_policy: document.getElementById('reactorAllocationPolicy')?.value || 'inverse_ct',
+        ds_allocation_policy: document.getElementById('dsAllocationPolicy')?.value || 'inverse_ct',
+        shared_downstream: document.getElementById('sharedDownstream')?.checked || true
     };
 
     // Collect economics parameters
-    const economicsInputs = document.querySelectorAll('#economicsParams input');
-    economicsInputs.forEach(input => {
-        const name = input.name;
-        if (name) {
-            const value = parseFloat(input.value);
-            if (!scenario.economics) scenario.economics = {};
-            scenario.economics[name] = value;
-        }
+    const discountRateEl = document.getElementById('discountRate');
+    const taxRateEl = document.getElementById('taxRate');
+    console.log('Economics form elements found:', {
+        discountRate: discountRateEl?.value,
+        taxRate: taxRateEl?.value
     });
-
-    // Collect labor parameters
-    const laborInputs = document.querySelectorAll('#laborParams input');
-    laborInputs.forEach(input => {
-        const name = input.name;
-        if (name) {
-            const value = parseFloat(input.value);
-            if (!scenario.labor) scenario.labor = {};
-            scenario.labor[name] = value;
-        }
-    });
-
-    // Collect OPEX parameters
-    const opexInputs = document.querySelectorAll('#opexParams input');
-    opexInputs.forEach(input => {
-        const name = input.name;
-        if (name) {
-            const value = parseFloat(input.value);
-            if (!scenario.opex) scenario.opex = {};
-            scenario.opex[name] = value;
-        }
-    });
-
-    // Collect CAPEX parameters
-    const capexInputs = document.querySelectorAll('#capexParams input');
-    capexInputs.forEach(input => {
-        const name = input.name;
-        if (name) {
-            const value = parseFloat(input.value);
-            if (!scenario.capex) scenario.capex = {};
-            scenario.capex[name] = value;
-        }
-    });
-
-    // Collect pricing parameters
-    const pricingInputs = document.querySelectorAll('#pricingParams input, #pricingParams select');
-    pricingInputs.forEach(input => {
-        const name = input.name;
-        if (name) {
-            const value = input.type === 'number' ? parseFloat(input.value) : input.value;
-            if (!scenario.pricing) scenario.pricing = {};
-            scenario.pricing[name] = value;
-        }
-    });
-
-    // Collect prices
-    scenario.prices = {
-        product_prices: {
-            default: parseFloat(document.querySelector('[name="product_price"]')?.value) || 400
-        },
-        raw_prices: appState.rawPrices
+    
+    scenario.economics = {
+        discount_rate: parseFloat(discountRateEl?.value) / 100 || 0.10,
+        tax_rate: parseFloat(taxRateEl?.value) / 100 || 0.25,
+        depreciation_years: parseInt(document.getElementById('depreciationYears')?.value) || 10,
+        project_lifetime_years: parseInt(document.getElementById('projectLifetimeYears')?.value) || 15,
+        variable_opex_share: parseFloat(document.getElementById('variableOpexShare')?.value) / 100 || 0.85,
+        maintenance_pct_of_equip: parseFloat(document.getElementById('maintenancePctOfEquip')?.value) / 100 || 0.09,
+        ga_other_scale_factor: parseFloat(document.getElementById('gaScaleFactor')?.value) || 10.84
     };
     
-    // Add default assumptions if not present
-    if (!scenario.assumptions) {
-        scenario.assumptions = {
-            electricity_cost: 0.11,
-            steam_cost: 0.0228,
-            water_cost: 0.0025
-        };
-    }
+    console.log('Final economics config:', scenario.economics);
+
+    // Collect labor parameters
+    scenario.labor = {
+        plant_manager_salary: parseFloat(document.getElementById('plantManagerSalary')?.value) || 104000,
+        fermentation_specialist_salary: parseFloat(document.getElementById('fermentationSpecialistSalary')?.value) || 39000,
+        downstream_process_operator_salary: parseFloat(document.getElementById('dsProcessOperatorSalary')?.value) || 52000,
+        general_technician_salary: parseFloat(document.getElementById('generalTechnicianSalary')?.value) || 32500,
+        qaqc_lab_tech_salary: parseFloat(document.getElementById('qaqcLabTechSalary')?.value) || 39000,
+        maintenance_tech_salary: parseFloat(document.getElementById('maintenanceTechSalary')?.value) || 39000,
+        utility_operator_salary: parseFloat(document.getElementById('utilityOperatorSalary')?.value) || 39000,
+        logistics_clerk_salary: parseFloat(document.getElementById('logisticsClerkSalary')?.value) || 39000,
+        office_clerk_salary: parseFloat(document.getElementById('officeClerkSalary')?.value) || 32500,
+        min_fte: parseInt(document.getElementById('minFte')?.value) || 15,
+        fte_per_tpa: parseFloat(document.getElementById('ftePerTpa')?.value) || 1.0
+    };
+
+    // Collect OPEX parameters
+    scenario.opex = {
+        electricity_usd_per_kwh: parseFloat(document.getElementById('electricityUsdPerKwh')?.value) || 0.107,
+        steam_usd_per_kg: parseFloat(document.getElementById('steamUsdPerKg')?.value) || 0.0228,
+        water_usd_per_m3: parseFloat(document.getElementById('waterUsdPerM3')?.value) || 0.002,
+        natural_gas_usd_per_mmbtu: parseFloat(document.getElementById('naturalGasUsdPerMmbtu')?.value) || 3.50,
+        raw_materials_markup: parseFloat(document.getElementById('rawMaterialsMarkup')?.value) || 1.0,
+        utilities_efficiency: parseFloat(document.getElementById('utilitiesEfficiency')?.value) || 0.85
+    };
+
+    // Collect CAPEX parameters
+    scenario.capex = {
+        land_cost_per_m2: parseFloat(document.getElementById('landCostPerM2')?.value) || 500,
+        building_cost_per_m2: parseFloat(document.getElementById('buildingCostPerM2')?.value) || 2000,
+        fermenter_base_cost: parseFloat(document.getElementById('fermenterBaseCost')?.value) || 150000,
+        fermenter_scale_exponent: parseFloat(document.getElementById('fermenterScaleExponent')?.value) || 0.6,
+        centrifuge_cost: parseFloat(document.getElementById('centrifugeCost')?.value) || 200000,
+        tff_skid_cost: parseFloat(document.getElementById('tffSkidCost')?.value) || 150000,
+        lyophilizer_cost_per_m2: parseFloat(document.getElementById('lyophilizerCostPerM2')?.value) || 50000,
+        utilities_cost_factor: parseFloat(document.getElementById('utilitiesCostFactor')?.value) / 100 || 0.25,
+        installation_factor: parseFloat(document.getElementById('installationFactor')?.value) / 100 || 0.15,
+        contingency_factor: parseFloat(document.getElementById('contingencyFactor')?.value) / 100 || 0.125,
+        working_capital_months: parseInt(document.getElementById('workingCapitalMonths')?.value) || 3
+    };
+
+    // Collect product pricing
+    scenario.prices = {
+        product_prices: {
+            yogurt: parseFloat(document.getElementById('priceYogurt')?.value) || 400,
+            lacto_bifido: parseFloat(document.getElementById('priceLactoBifido')?.value) || 400,
+            bacillus: parseFloat(document.getElementById('priceBacillus')?.value) || 400,
+            sacco: parseFloat(document.getElementById('priceSacco')?.value) || 500,
+            default: parseFloat(document.getElementById('priceLactoBifido')?.value) || 400
+        },
+        raw_prices: appState.rawPrices || {}
+    };
+
+    // Collect optimization parameters
+    scenario.optimization = {
+        enabled: document.getElementById('optimizationEnabled')?.checked || false,
+        simulation_type: document.getElementById('simulationType')?.value || 'deterministic',
+        objectives: [],
+        min_tpa: parseFloat(document.getElementById('minTpa')?.value) || null,
+        max_capex_usd: parseFloat(document.getElementById('maxCapex')?.value) * 1000000 || null,
+        min_utilization: parseFloat(document.getElementById('minUtilization')?.value) / 100 || null,
+        max_payback: parseFloat(document.getElementById('maxPayback')?.value) || null,
+        max_evaluations: parseInt(document.getElementById('maxEvaluations')?.value) || 100,
+        population_size: parseInt(document.getElementById('populationSize')?.value) || 50,
+        n_generations: parseInt(document.getElementById('nGenerations')?.value) || 100,
+        n_monte_carlo_samples: parseInt(document.getElementById('nMonteCarloSamples')?.value) || 1000,
+        confidence_level: parseFloat(document.getElementById('confidenceLevel')?.value) / 100 || 0.95
+    };
+
+    // Collect optimization objectives
+    document.querySelectorAll('#optimization-tab input[type="checkbox"]:checked').forEach(checkbox => {
+        if (checkbox.value && ['npv', 'irr', 'capex', 'opex', 'payback'].includes(checkbox.value)) {
+            scenario.optimization.objectives.push(checkbox.value);
+        }
+    });
+
+    // Collect sensitivity parameters
+    scenario.sensitivity = {
+        enabled: document.getElementById('sensitivityEnabled')?.checked || false,
+        parameters: [],
+        delta_percentage: parseFloat(document.getElementById('deltaPercentage')?.value) / 100 || 0.1,
+        grid_points: parseInt(document.getElementById('gridPoints')?.value) || 5,
+        n_samples: parseInt(document.getElementById('mcSensitivitySamples')?.value) || 1000
+    };
+
+    // Collect sensitivity parameters to analyze
+    document.querySelectorAll('#sensitivity-tab input[type="checkbox"]:checked').forEach(checkbox => {
+        if (checkbox.value) {
+            scenario.sensitivity.parameters.push(checkbox.value);
+        }
+    });
+
+    // Add assumptions based on collected data
+    scenario.assumptions = {
+        hours_per_year: parseFloat(document.getElementById('hoursPerYear')?.value) || 8760,
+        upstream_availability: parseFloat(document.getElementById('upstreamAvailability')?.value) / 100 || 0.92,
+        downstream_availability: parseFloat(document.getElementById('downstreamAvailability')?.value) / 100 || 0.90,
+        quality_yield: parseFloat(document.getElementById('qualityYield')?.value) / 100 || 0.98,
+        discount_rate: scenario.economics.discount_rate,
+        tax_rate: scenario.economics.tax_rate,
+        variable_opex_share: scenario.economics.variable_opex_share,
+        maintenance_pct_of_equip: scenario.economics.maintenance_pct_of_equip,
+        ga_other_scale_factor: scenario.economics.ga_other_scale_factor,
+        depreciation_years: scenario.economics.depreciation_years,
+        project_lifetime_years: scenario.economics.project_lifetime_years
+    };
 
     return scenario;
 }
@@ -1051,55 +1133,172 @@ function displaySensitivityResults(results) {
 
 // Chart Functions
 function createResultCharts(results) {
-    createCashFlowChart(results.cashflow);
-    createCostBreakdownChart(results.economics);
+    try {
+        const summary = results.summary || {};
+        const capacity = results.capacity || {};
+        const economics = results.economics || {};
+        const allocation = results.allocation || {};
+        
+        // Create capacity utilization chart
+        createCapacityChart(capacity, allocation);
+        
+        // Create utilization breakdown chart
+        createUtilizationChart(capacity);
+        
+        // Create CAPEX breakdown chart
+        createCapexChart(economics);
+        
+        // Create OPEX breakdown chart
+        createOpexChart(economics);
+        
+        // Create cash flow chart if data available
+        if (results.cashflow || economics.cash_flow) {
+            createCashFlowChart(results.cashflow || economics.cash_flow);
+        }
+        
+    } catch (error) {
+        console.error('Error creating charts:', error);
+        showAlert('Charts could not be displayed. Check console for details.', 'warning');
+    }
+}
+
+function createCapacityChart(capacity, allocation) {
+    const container = document.getElementById('capacityChart');
+    if (!container) return;
+
+    const actualTPA = capacity.actual_tpa || 0;
+    const targetTPA = capacity.target_tpa || 10;
+    const utilizationPct = (actualTPA / targetTPA * 100) || 0;
+
+    const data = [{
+        type: 'bar',
+        x: ['Target TPA', 'Actual TPA'],
+        y: [targetTPA, actualTPA],
+        marker: {
+            color: ['#6c757d', actualTPA >= targetTPA ? '#28a745' : '#ffc107']
+        }
+    }];
+
+    const layout = {
+        title: 'Production Capacity',
+        yaxis: { title: 'TPA (Tonnes per Annum)' },
+        showlegend: false,
+        height: 300
+    };
+
+    Plotly.newPlot(container, data, layout);
+}
+
+function createUtilizationChart(capacity) {
+    const container = document.getElementById('utilizationChart');
+    if (!container) return;
+
+    const utilization = (capacity.utilization || 0) * 100;
+    
+    const data = [{
+        type: 'pie',
+        values: [utilization, 100 - utilization],
+        labels: ['Utilized', 'Available'],
+        marker: {
+            colors: ['#007bff', '#e9ecef']
+        },
+        hole: 0.4
+    }];
+
+    const layout = {
+        title: `Equipment Utilization: ${utilization.toFixed(1)}%`,
+        showlegend: true,
+        height: 300
+    };
+
+    Plotly.newPlot(container, data, layout);
+}
+
+function createCapexChart(economics) {
+    const container = document.getElementById('capexChart');
+    if (!container) return;
+
+    // Extract CAPEX components
+    const equipment = economics.equipment_cost || 0;
+    const building = economics.building_cost || 0;
+    const land = economics.land_cost || 0;
+    const installation = economics.installation_cost || 0;
+    const contingency = economics.contingency_cost || 0;
+    const workingCapital = economics.working_capital || 0;
+
+    const data = [{
+        type: 'pie',
+        values: [equipment, building, land, installation, contingency, workingCapital],
+        labels: ['Equipment', 'Building', 'Land', 'Installation', 'Contingency', 'Working Capital'],
+        marker: {
+            colors: ['#007bff', '#28a745', '#ffc107', '#fd7e14', '#dc3545', '#6f42c1']
+        }
+    }];
+
+    const layout = {
+        title: 'CAPEX Breakdown',
+        showlegend: true,
+        height: 300
+    };
+
+    Plotly.newPlot(container, data, layout);
+}
+
+function createOpexChart(economics) {
+    const container = document.getElementById('opexChart');
+    if (!container) return;
+
+    // Extract OPEX components
+    const rawMaterials = economics.raw_materials_cost || 0;
+    const utilities = economics.utilities_cost || 0;
+    const labor = economics.labor_cost || 0;
+    const maintenance = economics.maintenance_cost || 0;
+    const other = economics.other_opex || 0;
+
+    const data = [{
+        type: 'pie',
+        values: [rawMaterials, utilities, labor, maintenance, other],
+        labels: ['Raw Materials', 'Utilities', 'Labor', 'Maintenance', 'Other'],
+        marker: {
+            colors: ['#17a2b8', '#28a745', '#ffc107', '#fd7e14', '#6c757d']
+        }
+    }];
+
+    const layout = {
+        title: 'Annual OPEX Breakdown',
+        showlegend: true,
+        height: 300
+    };
+
+    Plotly.newPlot(container, data, layout);
 }
 
 function createCashFlowChart(cashflow) {
-    const container = document.getElementById('cashflowChart');
+    const container = document.getElementById('cashFlowChart');
     if (!container || !cashflow) return;
 
+    const years = cashflow.years || Array.from({length: 15}, (_, i) => i + 1);
+    const values = cashflow.values || [];
+
     const trace = {
-        x: cashflow.years || [],
-        y: cashflow.values || [],
+        x: years,
+        y: values,
         type: 'scatter',
         mode: 'lines+markers',
         name: 'Cash Flow',
-        line: { color: '#007bff' }
+        line: { color: '#007bff', width: 3 },
+        marker: { size: 6 }
     };
 
     const layout = {
         title: 'Cash Flow Projection',
         xaxis: { title: 'Year' },
-        yaxis: { title: 'Cash Flow ($)' },
-        hovermode: 'x unified'
+        yaxis: { title: 'Cash Flow ($M)' },
+        hovermode: 'x unified',
+        height: 400
     };
 
     Plotly.newPlot(container, [trace], layout);
-}
-
-function createCostBreakdownChart(economics) {
-    const container = document.getElementById('costBreakdownChart');
-    if (!container || !economics) return;
-
-    const data = [{
-        values: [
-            economics.raw_material_cost || 0,
-            economics.utilities_cost || 0,
-            economics.labor_cost || 0,
-            economics.maintenance_cost || 0,
-            economics.other_costs || 0
-        ],
-        labels: ['Raw Materials', 'Utilities', 'Labor', 'Maintenance', 'Other'],
-        type: 'pie',
-        hole: 0.4
-    }];
-
-    const layout = {
-        title: 'Operating Cost Breakdown'
-    };
-
-    Plotly.newPlot(container, data, layout);
 }
 
 // Utility Functions
@@ -1287,15 +1486,13 @@ function cancelJob() {
 // Export Functions
 async function exportToExcel() {
     if (!appState.results) {
-        // Try to run the scenario first
-        showAlert('Running scenario before export...', 'info');
-        await runScenario();
-        // Wait a bit for results
-        setTimeout(() => exportToExcel(), 2000);
+        showAlert('No results to export. Please run a scenario first.', 'warning');
         return;
     }
 
     try {
+        showLoading('Generating Excel export...');
+        
         const response = await fetch(API_ENDPOINTS.export, {
             method: 'POST',
             headers: {
@@ -1304,23 +1501,43 @@ async function exportToExcel() {
             body: JSON.stringify({
                 scenario_name: appState.currentScenario.name || 'Bioprocess Scenario',
                 result: appState.results,
-                scenario_input: appState.currentScenario
+                scenario_input: collectFormData()
             })
         });
 
         if (response.ok) {
-            const result = await response.json();
-            // Download the file
-            if (result.download_url) {
-                window.open(result.download_url, '_blank');
-                showAlert('Excel file generated successfully!', 'success');
+            const contentType = response.headers.get('content-type');
+            
+            if (contentType && contentType.includes('application/json')) {
+                const result = await response.json();
+                if (result.download_url) {
+                    window.open(result.download_url, '_blank');
+                    showAlert('Excel file generated successfully!', 'success');
+                } else if (result.error) {
+                    showAlert(`Export failed: ${result.error}`, 'danger');
+                }
+            } else {
+                // Direct file download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bioprocess-analysis-${Date.now()}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showAlert('Excel file downloaded successfully!', 'success');
             }
         } else {
-            showAlert('Failed to export to Excel', 'danger');
+            const errorText = await response.text();
+            showAlert(`Export failed: ${errorText}`, 'danger');
         }
     } catch (error) {
         console.error('Error exporting to Excel:', error);
-        showAlert('Failed to export to Excel', 'danger');
+        showAlert('Failed to export to Excel. Check console for details.', 'danger');
+    } finally {
+        hideLoading();
     }
 }
 
@@ -1331,34 +1548,62 @@ async function exportResults(format = 'json') {
     }
 
     try {
-        const response = await fetch(`${API_ENDPOINTS.export}?format=${format}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                scenario: appState.currentScenario,
-                results: appState.results
-            })
-        });
+        showLoading(`Exporting results as ${format.toUpperCase()}...`);
+        
+        const exportData = {
+            scenario: collectFormData(),
+            results: appState.results,
+            metadata: {
+                export_date: new Date().toISOString(),
+                format: format,
+                application: 'Bioprocess Designer Pro'
+            }
+        };
 
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `bioprocess-results-${Date.now()}.${format}`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            showAlert('Results exported successfully!', 'success');
+        if (format === 'json') {
+            // Client-side JSON export
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', `bioprocess-results-${Date.now()}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('JSON results exported successfully!', 'success');
         } else {
-            showAlert('Failed to export results', 'danger');
+            // Server-side export for other formats
+            const response = await fetch(`${API_ENDPOINTS.export}?format=${format}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(exportData)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bioprocess-results-${Date.now()}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showAlert(`${format.toUpperCase()} results exported successfully!`, 'success');
+            } else {
+                const errorText = await response.text();
+                showAlert(`Export failed: ${errorText}`, 'danger');
+            }
         }
     } catch (error) {
         console.error('Error exporting results:', error);
-        showAlert('Failed to export results', 'danger');
+        showAlert(`Failed to export ${format.toUpperCase()} results`, 'danger');
+    } finally {
+        hideLoading();
     }
 }
 
