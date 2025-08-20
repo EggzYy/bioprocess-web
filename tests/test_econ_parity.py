@@ -26,6 +26,7 @@ def test_build_cash_flows_parity_mode_variable_ramp():
         project_years=12,
         variable_opex_share=0.85,
         parity_mode=True,
+        steady_state_kg=10000.0,
     )
 
     # Years 0 and 1 are CAPEX outflows
