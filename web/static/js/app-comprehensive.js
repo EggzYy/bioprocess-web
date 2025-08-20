@@ -138,18 +138,69 @@ const appState = new AppState();
 // UI Helper Functions
 function showLoading(message = 'Processing...') {
     appState.isLoading = true;
-    const loadingEl = document.getElementById('loadingIndicator');
-    if (loadingEl) {
-        loadingEl.querySelector('.loading-message').textContent = message;
-        loadingEl.style.display = 'flex';
+    
+    // Show the progress modal
+    const modal = document.getElementById('progressModal');
+    const messageEl = document.getElementById('progressMessage');
+    const progressBar = document.getElementById('progressBar');
+    
+    if (modal) {
+        // Set message
+        if (messageEl) {
+            messageEl.textContent = message;
+        }
+        
+        // Reset progress bar
+        if (progressBar) {
+            progressBar.style.width = '0%';
+            progressBar.classList.add('progress-bar-animated');
+        }
+        
+        // Force modal to be visible - remove fade to prevent transition issues
+        modal.classList.remove('fade');
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        
+        // Add backdrop
+        if (!document.querySelector('.modal-backdrop')) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop show';
+            document.body.appendChild(backdrop);
+        }
+        
+        // Add body class
+        document.body.classList.add('modal-open');
     }
 }
 
 function hideLoading() {
     appState.isLoading = false;
-    const loadingEl = document.getElementById('loadingIndicator');
-    if (loadingEl) {
-        loadingEl.style.display = 'none';
+    
+    const modal = document.getElementById('progressModal');
+    const progressBar = document.getElementById('progressBar');
+    
+    if (modal) {
+        if (progressBar) {
+            progressBar.style.width = '100%';
+            progressBar.classList.remove('progress-bar-animated');
+        }
+        
+        // Hide modal after a brief delay to show completion
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            
+            // Remove backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            
+            // Remove body class
+            document.body.classList.remove('modal-open');
+        }, 500);
     }
 }
 
@@ -175,9 +226,10 @@ function showAlert(message, type = 'info') {
 function collectFormData() {
     const scenario = { ...appState.currentScenario };
     
-    // Collect basic parameters
-    scenario.name = document.querySelector('[name="scenario_name"]')?.value || 'Unnamed Scenario';
-    scenario.target_tpa = parseFloat(document.querySelector('[name="target_tpa"]')?.value) || 10;
+    // Collect basic parameters with correct field names for API
+    scenario.name = document.getElementById('scenarioName')?.value || 'Test Scenario';
+    scenario.description = document.getElementById('scenarioDescription')?.value || '';
+    scenario.target_tpa = parseFloat(document.getElementById('targetTPA')?.value) || 10;
     
     // Collect strains from the individual strain cards
     const strainRows = document.querySelectorAll('.strain-row');
@@ -723,8 +775,30 @@ async function loadRawPrices() {
 }
 
 async function runScenario() {
-    const scenario = collectFormData();
+    // Show the progress modal immediately when button is clicked
     showLoading('Running scenario simulation...');
+    
+    const scenario = collectFormData();
+    
+    // Add default strain if none configured (for testing purposes)
+    if (!scenario.strains || scenario.strains.length === 0) {
+        scenario.strains = [{
+            name: 'Default Strain',
+            fermentation_time_h: 18,
+            turnaround_time_h: 9,
+            downstream_time_h: 4,
+            yield_g_per_L: 82.87,
+            media_cost_usd: 245,
+            cryo_cost_usd: 189,
+            utility_rate_ferm_kw: 324,
+            utility_rate_cent_kw: 15,
+            utility_rate_lyo_kw: 1.5,
+            utility_cost_steam: 0.0228,
+            cv_ferm: 0.1,
+            cv_turn: 0.1,
+            cv_down: 0.1
+        }];
+    }
 
     try {
         // Wrap scenario in the expected API format

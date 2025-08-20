@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 import subprocess
 import time
 import functools
@@ -29,9 +30,11 @@ class E2ETest(unittest.TestCase):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.binary_location = "/home/jules/.cache/selenium/chrome/linux64/139.0.7258.138/chrome"
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1920,1080")
         
-        service = Service(executable_path="/home/jules/.cache/selenium/chromedriver/linux64/139.0.7258.138/chromedriver")
+        # Use webdriver-manager to automatically handle ChromeDriver
+        service = Service(ChromeDriverManager().install())
         
         # Wait for the server to be ready
         for _ in range(20):
