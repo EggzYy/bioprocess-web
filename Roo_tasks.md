@@ -4,13 +4,13 @@
 
 ### Current Status
 - **API Validation Issue**: ✅ SOLVED - FastAPI endpoint now accepts browser requests after fixing validation mismatch
-- **Strain Selection**: ✅ WORKING PARTIALLY - Users can add/remove default strains from dropdown list successfully. CUSTOM STRAINS DO NOT APPEAR TESTED.
+- **Strain Selection**: WORKING PARTIALLY - Users can add/remove default strains from dropdown list successfully. CUSTOM STRAINS DO NOT APPEAR TESTED.
 - **Run Analysis Button**: ✅ WORKING - Button executes without 422 errors
 
 ### Critical Remaining Issues
 The frontend form data collection and results display systems are fundamentally broken. While the API accepts requests, the frontend is not properly collecting user inputs or displaying results.
 
-## IMMEDIATE PRIORITY TASKS
+## IMMEDIATE PRIORITY TASKS.
 
 ### 🔥 TASK 1: Investigate Volume Options Hardcoding Issue
 **Problem**: Volume options always default to 2500L despite no 2500L checkbox existing in UI
