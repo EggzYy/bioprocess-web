@@ -19,24 +19,36 @@ def create_test_scenario(volume_options, base_volume):
     # Create strain configuration
     strain = StrainInput(
         name="ecoli",
-        fermentation_titer=100.0,
-        fermentation_yield=0.3,
-        cell_density=50.0,
-        fermentation_time=72.0,
-        seed_train_time=48.0,
-        downstream_time=24.0,
-        downstream_yield=0.85,
-        requires_tff=True,
-        downstream_complexity="medium"
+        fermentation_time_h=72.0,
+        turnaround_time_h=48.0,
+        downstream_time_h=24.0,
+        yield_g_per_L=100.0,
+        media_cost_usd=50.0,
+        cryo_cost_usd=100.0,
+        utility_rate_ferm_kw=0.15,
+        utility_rate_cent_kw=0.12,
+        utility_rate_lyo_kw=0.18,
+        utility_cost_steam=25.0,
+        licensing_fixed_cost_usd=1000000.0,
+        licensing_royalty_pct=5.0,
+        cv_ferm=0.1,
+        cv_turn=0.1,
+        cv_down=0.1
     )
 
     # Create equipment configuration
     equipment = EquipmentConfig(
         reactors_total=4,
         ds_lines_total=2,
-        reactor_allocation_policy="equal",
+        reactor_allocation_policy="inverse_ct",
         shared_downstream=True,
-        optimize_equipment=False
+        year_hours=8760,
+        reactors_per_strain={"ecoli": 2},
+        ds_lines_per_strain={"ecoli": 1},
+        upstream_availability=0.85,
+        downstream_availability=0.80,
+        quality_yield=0.85,
+        ds_allocation_policy="inverse_ct"
     )
 
     # Create volume plan with the provided options
@@ -44,7 +56,8 @@ def create_test_scenario(volume_options, base_volume):
         base_fermenter_vol_l=base_volume,
         volume_options_l=volume_options,
         working_volume_fraction=0.8,
-        media_tank_ratio=1.25
+        media_tank_ratio=1.25,
+        seed_fermenter_ratio=0.1
     )
 
     # Create scenario
@@ -55,15 +68,16 @@ def create_test_scenario(volume_options, base_volume):
         strains=[strain],
         equipment=equipment,
         volumes=volumes,
-        optimize_equipment=False
+        optimize_equipment=False,
+        use_multiobjective=False
     )
 
     return scenario
 
 def trace_volume_usage(scenario, expected_fermenter_vol):
     """Trace how volumes are used throughout the system."""
-    print(f"\n=== TRACING VOLUME USAGE ===")
-    print(f"Input Configuration:")
+    print("\n=== TRACING VOLUME USAGE ===")
+    print("Input Configuration:")
     print(f"  base_fermenter_vol_l: {scenario.volumes.base_fermenter_vol_l}L")
     print(f"  volume_options_l: {scenario.volumes.volume_options_l}")
     print(f"  working_volume_fraction: {scenario.volumes.working_volume_fraction}")
@@ -81,17 +95,17 @@ def trace_volume_usage(scenario, expected_fermenter_vol):
     try:
         result = run_scenario(scenario)
 
-        print(f"\nActual Results:")
-        print(f"  Fermenter Volume Used: {result.equipment.specifications.fermenter_volume_l}L")
-        print(f"  Media Tank Volume: {result.equipment.specifications.media_tank_volume_l}L")
-        print(f"  Seed Fermenter Volume: {result.equipment.specifications.seed_fermenter_volume_l}L")
+        print("\nActual Results:")
+        print(f"  Fermenter Volume Used: {result.equipment.specifications['fermenter_volume_l']}L")
+        print(f"  Media Tank Volume: {result.equipment.specifications['media_tank_volume_l']}L")
+        print(f"  Seed Fermenter Volume: {result.equipment.specifications['seed_fermenter_volume_l']}L")
 
         # Verify calculations
-        actual_fermenter = result.equipment.specifications.fermenter_volume_l
-        actual_media = result.equipment.specifications.media_tank_volume_l
+        actual_fermenter = result.equipment.specifications['fermenter_volume_l']
+        actual_media = result.equipment.specifications['media_tank_volume_l']
         calculated_media = actual_fermenter * scenario.volumes.media_tank_ratio
 
-        print(f"\nValidation:")
+        print("\nValidation:")
         if actual_fermenter == expected_fermenter_vol:
             print(f"  ✓ Fermenter volume matches expected ({expected_fermenter_vol}L)")
         else:
@@ -104,7 +118,7 @@ def trace_volume_usage(scenario, expected_fermenter_vol):
 
         # Check if this is where the 2500L comes from
         if abs(actual_media - 2500.0) < 0.1:
-            print(f"  🔍 FOUND THE 2500L! It's the media tank volume.")
+            print("  🔍 FOUND THE 2500L! It's the media tank volume.")
             print(f"     This comes from fermenter {actual_fermenter}L × media_tank_ratio 1.25 = {actual_media}L")
 
         return result
@@ -167,58 +181,58 @@ def test_checkbox_scenarios():
 
 def test_optimization_scenarios():
     """Test how optimization handles volume options."""
-    print(f"\n" + "="*60)
+    print("\n" + "="*60)
     print("TESTING OPTIMIZATION SCENARIOS")
     print("="*60)
 
     # Test 6: Optimization with single volume option
-    print(f"\n" + "="*50)
+    print("\n" + "="*50)
     print("TEST 6: Optimization with single volume (500L)")
-    print(f"="*50)
+    print("="*50)
     scenario6 = create_test_scenario([500], 500)
     scenario6.optimize_equipment = True
 
     print("With optimization enabled, system should consider volume_options_l")
     try:
         result6 = run_scenario(scenario6)
-        print(f"Optimization result:")
+        print("Optimization result:")
         if result6.optimization and result6.optimization.best_solution:
             best = result6.optimization.best_solution
             opt_volume = best.get('fermenter_volume_l', 'N/A')
             print(f"  Optimized fermenter volume: {opt_volume}L")
-            print(f"  Final media tank volume: {result6.equipment.specifications.media_tank_volume_l}L")
+            print(f"  Final media tank volume: {result6.equipment.specifications['media_tank_volume_l']}L")
 
             if opt_volume == 500:
-                print(f"  ✓ Optimizer used the provided volume option")
+                print("  ✓ Optimizer used the provided volume option")
             else:
-                print(f"  ✗ Optimizer didn't use provided volume option")
+                print("  ✗ Optimizer didn't use provided volume option")
         else:
-            print(f"  ✗ Optimization failed")
+            print("  ✗ Optimization failed")
     except Exception as e:
         print(f"Error in optimization test: {e}")
 
     # Test 7: Optimization with multiple volume options
-    print(f"\n" + "="*50)
+    print("\n" + "="*50)
     print("TEST 7: Optimization with multiple volumes")
-    print(f"="*50)
+    print("="*50)
     scenario7 = create_test_scenario([500, 1000, 2000, 5000], 500)
     scenario7.optimize_equipment = True
 
     try:
         result7 = run_scenario(scenario7)
-        print(f"Optimization with multiple options:")
+        print("Optimization with multiple options:")
         if result7.optimization and result7.optimization.best_solution:
             best = result7.optimization.best_solution
             opt_volume = best.get('fermenter_volume_l', 'N/A')
             print(f"  Optimized fermenter volume: {opt_volume}L")
-            print(f"  Available options were: [500, 1000, 2000, 5000]L")
+            print("  Available options were: [500, 1000, 2000, 5000]L")
 
             if opt_volume in [500, 1000, 2000, 5000]:
-                print(f"  ✓ Optimizer selected from provided options")
+                print("  ✓ Optimizer selected from provided options")
             else:
-                print(f"  ✗ Optimizer selected volume NOT in options!")
+                print("  ✗ Optimizer selected volume NOT in options!")
         else:
-            print(f"  ✗ Optimization failed")
+            print("  ✗ Optimization failed")
     except Exception as e:
         print(f"Error in multi-volume optimization test: {e}")
 
