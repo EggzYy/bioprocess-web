@@ -5,9 +5,12 @@ This module provides better handling of excess capacity during multi-objective o
 
 import numpy as np
 import pandas as pd
+import logging
 from typing import Dict, Any, Tuple, List, Optional
 from .models import ScenarioInput
 from .optimizer import evaluate_configuration, optimize_for_minimal_excess
+
+logger = logging.getLogger(__name__)
 
 
 def optimize_with_progressive_constraints(
@@ -187,25 +190,25 @@ def select_knee_with_excess_penalty(
 
 def optimize_with_capacity_enforcement(
     scenario: ScenarioInput,
-    max_reactors: int = 20,
-    max_ds_lines: int = 10,
+    max_reactors: int = 60,
+    max_ds_lines: int = 12,
     volume_options: Optional[List[float]] = None,
     enforce_capacity: bool = True,
-    max_allowed_excess: float = 0.2,  # 20% max excess by default
+    max_allowed_excess: float = 0.2,
 ) -> Tuple[Dict[str, Any], pd.DataFrame]:
     """
     Optimization with strict capacity enforcement similar to original pricing_integrated.py.
 
     This function mimics the behavior of the original optimize_counts_multiobjective:
-    1. Grid search over all configurations
+    1. FULL grid search over ALL configurations (no early breaking)
     2. Filter to only those meeting capacity if enforce_capacity=True
     3. Create Pareto front from feasible set only
     4. Select knee point
 
     Args:
         scenario: Scenario input
-        max_reactors: Maximum number of reactors
-        max_ds_lines: Maximum number of DS lines
+        max_reactors: Maximum number of reactors (default 60 to match original)
+        max_ds_lines: Maximum number of DS lines (default 12 to match original)
         volume_options: List of fermenter volumes
         enforce_capacity: Whether to enforce capacity constraint
         max_allowed_excess: Maximum allowed excess ratio when enforce_capacity=True
@@ -213,27 +216,41 @@ def optimize_with_capacity_enforcement(
     Returns:
         Tuple of (best_solution, all_results_df)
     """
+    import time
+    start_time = time.time()
+
     target_kg = scenario.target_tpa * 1000.0
 
     # If no volume options provided, use scenario volumes
     if volume_options is None:
-        if scenario.fermenter_volumes_to_test:
-            volume_options = scenario.fermenter_volumes_to_test
+        if hasattr(scenario, 'volumes') and scenario.volumes.volume_options_l:
+            volume_options = scenario.volumes.volume_options_l
         else:
-            volume_options = [scenario.fermenter_volume_l]
+            volume_options = [scenario.volumes.base_fermenter_vol_l]
 
     all_results = []
+    total_evaluations = len(volume_options) * (max_reactors - 1) * max_ds_lines
+    evaluation_count = 0
 
-    # Grid search over all configurations
+    logger.info(f"Starting FULL grid search optimization: {len(volume_options)} volumes × {max_reactors-1} reactors × {max_ds_lines} DS lines = {total_evaluations} evaluations")
+
+    # FULL grid search over ALL configurations - NO EARLY BREAKING
     for volume in volume_options:
         for reactors in range(2, max_reactors + 1):
             for ds_lines in range(1, max_ds_lines + 1):
+                evaluation_count += 1
+                if evaluation_count % 100 == 0:
+                    logger.info(f"Progress: {evaluation_count}/{total_evaluations} evaluations ({evaluation_count/total_evaluations*100:.1f}%)")
                 # Evaluate this configuration
                 result = evaluate_configuration(reactors, ds_lines, volume, scenario)
                 all_results.append(result)
 
     # Convert to DataFrame
     all_results_df = pd.DataFrame(all_results)
+
+    end_time = time.time()
+    runtime = end_time - start_time
+    logger.info(f"Completed {total_evaluations} evaluations in {runtime:.2f}s ({total_evaluations/runtime:.1f} evals/sec)")
 
     if all_results_df.empty:
         return None, all_results_df
@@ -259,15 +276,16 @@ def optimize_with_capacity_enforcement(
             if not constrained.empty:
                 feasible_df = constrained
                 break
-    if feasible_df is None:
-        # Fall back to solution with minimum excess that still meets capacity
-        best_idx = meets_capacity_df["excess_ratio"].idxmin()
-        best_solution = meets_capacity_df.loc[best_idx].to_dict()
-        best_solution["warning"] = (
-            f"Could not meet progressive excess limits up to 25%. "
-            f"Minimum achievable: {best_solution['excess_ratio']:.1%}"
-        )
-        return best_solution, all_results_df
+
+        if feasible_df is None:
+            # Fall back to solution with minimum excess that still meets capacity
+            best_idx = meets_capacity_df["excess_ratio"].idxmin()
+            best_solution = meets_capacity_df.loc[best_idx].to_dict()
+            best_solution["warning"] = (
+                f"Could not meet progressive excess limits up to 25%. "
+                f"Minimum achievable: {best_solution['excess_ratio']:.1%}"
+            )
+            return best_solution, all_results_df
 
     if feasible_df.empty:
         # This shouldn't happen given the logic above, but keep as safety

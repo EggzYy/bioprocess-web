@@ -287,8 +287,8 @@ def run_optimization(scenario: ScenarioInput) -> Optional[OptimizationResult]:
     # Enforce capacity strictly (align with original behavior)
     best_solution, all_results_df = optimize_with_capacity_enforcement(
         scenario,
-        max_reactors=getattr(scenario, "max_reactors", 20),
-        max_ds_lines=getattr(scenario, "max_ds_lines", 10),
+        max_reactors=getattr(scenario, "max_reactors", 60),  # Match original
+        max_ds_lines=getattr(scenario, "max_ds_lines", 12),  # Match original
         volume_options=volume_options,
         enforce_capacity=True,
         max_allowed_excess=0.2,

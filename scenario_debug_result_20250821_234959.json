@@ -1,0 +1,425 @@
+{
+  "job_id": null,
+  "result": {
+    "scenario_name": "Optimization Debug Test",
+    "timestamp": "2025-08-21T23:49:59.316806",
+    "kpis": {
+      "npv": 64167332.37143812,
+      "irr": 0.7606548370031787,
+      "payback_years": 2.157473286150222,
+      "tpa": 58.178540970666674,
+      "target_tpa": 15.0,
+      "capex": 8175908.003057646,
+      "opex": 1544751.7558488604,
+      "opex_per_kg": 26.551916395217205,
+      "ebitda_margin": 0.9336202090119571,
+      "up_utilization": 1.0,
+      "ds_utilization": 0.30288065843621403,
+      "meets_tpa": 1.0,
+      "production_kg": 58178.540970666676
+    },
+    "capacity": {
+      "per_strain": [
+        {
+          "name": "Debug Strain",
+          "fermentation_time_h": 18.0,
+          "turnaround_time_h": 9.0,
+          "downstream_time_h": 4.0,
+          "batch_mass_kg": 99.444,
+          "cv_ferm": 0.1,
+          "cv_turn": 0.1,
+          "cv_down": 0.1,
+          "utility_rate_ferm_kw": 324.0,
+          "utility_rate_cent_kw": 15.0,
+          "utility_rate_lyo_kw": 1.5,
+          "utility_cost_steam": 0.0228,
+          "ct_up_h": 27.0,
+          "ct_ds_h": 4.0,
+          "reactors_assigned": 2.0,
+          "ds_lines_assigned": 1.0,
+          "up_capacity_batches": 596.9777777777779,
+          "ds_capacity_batches": 1971.0,
+          "feasible_batches": 596.9777777777779,
+          "good_batches": 585.0382222222223,
+          "up_utilization": 1.0,
+          "ds_utilization": 0.30288065843621403,
+          "annual_kg_good": 58178.540970666676
+        }
+      ],
+      "total_feasible_batches": 596.9777777777779,
+      "total_good_batches": 585.0382222222223,
+      "total_annual_kg": 58178.540970666676,
+      "weighted_up_utilization": 1.0,
+      "weighted_ds_utilization": 0.30288065843621403,
+      "bottleneck": "upstream",
+      "kg_p10": null,
+      "kg_p50": null,
+      "kg_p90": null
+    },
+    "equipment": {
+      "counts": {
+        "fermenters": 2,
+        "1500.0L_fermenters": 2,
+        "seed_fermenters": 2,
+        "media_tanks": 2,
+        "centrifuges": 1,
+        "tff_skids": 1,
+        "lyophilizers": 1,
+        "cone_mills": 1,
+        "v_blenders": 1,
+        "qc_labs": 1
+      },
+      "specifications": {
+        "fermenter_volume_l": 1500.0,
+        "seed_fermenter_volume_l": 187.5,
+        "media_tank_volume_l": 1875.0,
+        "lyophilizer_size_m2": 20,
+        "v_blender_volume_l": 500,
+        "strain_processing_requirements": [
+          {
+            "name": "Debug Strain",
+            "respiration_type": "aerobic",
+            "requires_tff": false,
+            "downstream_complexity": 1.0
+          }
+        ],
+        "cost_breakdown": {
+          "fermenters": {
+            "unit_cost": 126219.95386269744,
+            "total_cost": 252439.90772539488,
+            "count": 2,
+            "volume_l": 1500.0
+          },
+          "downstream": {
+            "centrifuges": {
+              "count": 1,
+              "unit_cost": 200000.0,
+              "total_cost": 200000.0
+            },
+            "tff_skids": {
+              "count": 1,
+              "unit_cost": 150000.0,
+              "total_cost": 150000.0
+            },
+            "lyophilizers": {
+              "count": 1,
+              "unit_cost": 1000000.0,
+              "total_cost": 1000000.0,
+              "size_m2": 20,
+              "complexity_factor": 1.0
+            },
+            "total_downstream_cost": 1350000.0
+          },
+          "auxiliary": {
+            "seed_fermenters": {
+              "count": 2,
+              "volume_l": 187.5,
+              "unit_cost": 10874.149002741167,
+              "total_cost": 21748.298005482335
+            },
+            "media_tanks": {
+              "count": 2,
+              "volume_l": 1875.0,
+              "unit_cost": 28860.511277722795,
+              "total_cost": 57721.02255544559
+            },
+            "cone_mill": {
+              "count": 1,
+              "unit_cost": 50000,
+              "total_cost": 50000
+            },
+            "v_blender": {
+              "count": 1,
+              "volume_l": 500,
+              "unit_cost": 30000,
+              "total_cost": 30000
+            },
+            "qc_lab": {
+              "count": 1,
+              "unit_cost": 250000,
+              "total_cost": 250000
+            },
+            "total_auxiliary_cost": 409469.3205609279
+          },
+          "utilities": {
+            "autoclave": 100000,
+            "purified_water": 150000,
+            "wfi_system": 400000,
+            "clean_steam": 120000,
+            "cip_system": 250000,
+            "total_utilities": 1020000
+          }
+        }
+      },
+      "equipment_cost": 3031909.228286323,
+      "installation_cost": 454786.38424294844,
+      "utilities_cost": 1020000.0,
+      "total_installed_cost": 3486695.6125292717
+    },
+    "economics": {
+      "annual_revenue": 23271416.38826667,
+      "raw_materials_cost": 190429.94133333335,
+      "utilities_cost": 26183.3173030912,
+      "labor_cost": 892666.6666666667,
+      "maintenance_cost": 272871.8305457691,
+      "ga_other_cost": 162600.0,
+      "total_opex": 1544751.7558488604,
+      "land_cost": 687500.0,
+      "building_cost": 2750000.0,
+      "equipment_cost": 3031909.228286323,
+      "contingency": 865524.4515661589,
+      "working_capital": 386187.9389622151,
+      "total_capex": 8175908.003057646,
+      "npv": 64167332.37143812,
+      "irr": 0.7606548370031787,
+      "payback_years": 2.157473286150222,
+      "ebitda_margin": 0.9336202090119571,
+      "cash_flows": [
+        -5723135.602140351,
+        -2452772.4009172935,
+        6620198.2397635635,
+        9879197.934626237,
+        12323447.70577324,
+        13952947.553204574,
+        13952947.553204574,
+        13952947.553204574,
+        13952947.553204574,
+        13952947.553204574,
+        13952947.553204574,
+        13952947.553204574,
+        13850748.703166354
+      ],
+      "licensing_fixed": 0.0,
+      "licensing_royalty_rate": 0.0
+    },
+    "optimization": {
+      "best_solution": {
+        "reactors": 2,
+        "ds_lines": 1,
+        "fermenter_volume_l": 1500.0,
+        "meets_capacity": true,
+        "npv": 65761816.567854136,
+        "irr": 0.8699530668204694,
+        "capex": 6648046.064335897,
+        "opex_per_kg": 25.429873400856312,
+        "capacity_kg": 58178.540970666676,
+        "excess_ratio": 2.878569398044445,
+        "utilization": 0.651440329218107,
+        "payback_years": 2.0027668254530693,
+        "ebitda_margin": 0.9364253164978591,
+        "up_utilization": 1.0,
+        "ds_utilization": 0.30288065843621403,
+        "bottleneck": "upstream",
+        "economics": {
+          "annual_revenue": 23271416.38826667,
+          "raw_materials_cost": 190429.94133333335,
+          "utilities_cost": 26183.3173030912,
+          "labor_cost": 892666.6666666667,
+          "maintenance_cost": 207593.0062274945,
+          "ga_other_cost": 162600.0,
+          "total_opex": 1479472.9315305857,
+          "land_cost": 460366.5897711624,
+          "building_cost": 2774399.077253949,
+          "equipment_cost": 2306588.9580832724,
+          "contingency": 678372.047381214,
+          "working_capital": 542697.6379049713,
+          "total_capex": 6648046.064335897,
+          "npv": 65761816.567854136,
+          "irr": 0.8699530668204694,
+          "payback_years": 2.0027668254530693,
+          "ebitda_margin": 0.9364253164978591,
+          "cash_flows": [
+            -4653632.245035128,
+            -1994413.819300769,
+            6620683.612825025,
+            9889475.131335437,
+            12341068.770218248,
+            13975464.529473454,
+            13975464.529473454,
+            13975464.529473454,
+            13975464.529473454,
+            13975464.529473454,
+            13975464.529473454,
+            13975464.529473454,
+            13892363.953669254
+          ],
+          "licensing_fixed": 0.0,
+          "licensing_royalty_rate": 0.0
+        },
+        "capacity": {
+          "per_strain": [
+            {
+              "name": "Debug Strain",
+              "fermentation_time_h": 18.0,
+              "turnaround_time_h": 9.0,
+              "downstream_time_h": 4.0,
+              "batch_mass_kg": 99.444,
+              "cv_ferm": 0.1,
+              "cv_turn": 0.1,
+              "cv_down": 0.1,
+              "utility_rate_ferm_kw": 324.0,
+              "utility_rate_cent_kw": 15.0,
+              "utility_rate_lyo_kw": 1.5,
+              "utility_cost_steam": 0.0228,
+              "ct_up_h": 27.0,
+              "ct_ds_h": 4.0,
+              "reactors_assigned": 2.0,
+              "ds_lines_assigned": 1.0,
+              "up_capacity_batches": 596.9777777777779,
+              "ds_capacity_batches": 1971.0,
+              "feasible_batches": 596.9777777777779,
+              "good_batches": 585.0382222222223,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.30288065843621403,
+              "annual_kg_good": 58178.540970666676
+            }
+          ],
+          "total_feasible_batches": 596.9777777777779,
+          "total_good_batches": 585.0382222222223,
+          "total_annual_kg": 58178.540970666676,
+          "weighted_up_utilization": 1.0,
+          "weighted_ds_utilization": 0.30288065843621403,
+          "bottleneck": "upstream",
+          "kg_p10": null,
+          "kg_p50": null,
+          "kg_p90": null
+        },
+        "capex_breakdown": {
+          "equip": 2306588.9580832724,
+          "building": 2774399.077253949,
+          "land": 460366.5897711624,
+          "install": 345988.34371249087,
+          "direct": 5426976.379049712,
+          "cont": 678372.047381214,
+          "wc": 542697.6379049713,
+          "lyos_needed": 2,
+          "licensing_fixed_total": 0.0,
+          "total": 6648046.064335897
+        },
+        "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 287.9%"
+      },
+      "pareto_front": [
+        {
+          "reactors": 2,
+          "ds_lines": 1,
+          "fermenter_volume_l": 1500.0,
+          "meets_capacity": true,
+          "npv": 65761816.567854136,
+          "irr": 0.8699530668204694,
+          "capex": 6648046.064335897,
+          "opex_per_kg": 25.429873400856312,
+          "capacity_kg": 58178.540970666676,
+          "excess_ratio": 2.878569398044445,
+          "utilization": 0.651440329218107,
+          "payback_years": 2.0027668254530693,
+          "ebitda_margin": 0.9364253164978591,
+          "up_utilization": 1.0,
+          "ds_utilization": 0.30288065843621403,
+          "bottleneck": "upstream",
+          "economics": {
+            "annual_revenue": 23271416.38826667,
+            "raw_materials_cost": 190429.94133333335,
+            "utilities_cost": 26183.3173030912,
+            "labor_cost": 892666.6666666667,
+            "maintenance_cost": 207593.0062274945,
+            "ga_other_cost": 162600.0,
+            "total_opex": 1479472.9315305857,
+            "land_cost": 460366.5897711624,
+            "building_cost": 2774399.077253949,
+            "equipment_cost": 2306588.9580832724,
+            "contingency": 678372.047381214,
+            "working_capital": 542697.6379049713,
+            "total_capex": 6648046.064335897,
+            "npv": 65761816.567854136,
+            "irr": 0.8699530668204694,
+            "payback_years": 2.0027668254530693,
+            "ebitda_margin": 0.9364253164978591,
+            "cash_flows": [
+              -4653632.245035128,
+              -1994413.819300769,
+              6620683.612825025,
+              9889475.131335437,
+              12341068.770218248,
+              13975464.529473454,
+              13975464.529473454,
+              13975464.529473454,
+              13975464.529473454,
+              13975464.529473454,
+              13975464.529473454,
+              13975464.529473454,
+              13892363.953669254
+            ],
+            "licensing_fixed": 0.0,
+            "licensing_royalty_rate": 0.0
+          },
+          "capacity": {
+            "per_strain": [
+              {
+                "name": "Debug Strain",
+                "fermentation_time_h": 18.0,
+                "turnaround_time_h": 9.0,
+                "downstream_time_h": 4.0,
+                "batch_mass_kg": 99.444,
+                "cv_ferm": 0.1,
+                "cv_turn": 0.1,
+                "cv_down": 0.1,
+                "utility_rate_ferm_kw": 324.0,
+                "utility_rate_cent_kw": 15.0,
+                "utility_rate_lyo_kw": 1.5,
+                "utility_cost_steam": 0.0228,
+                "ct_up_h": 27.0,
+                "ct_ds_h": 4.0,
+                "reactors_assigned": 2.0,
+                "ds_lines_assigned": 1.0,
+                "up_capacity_batches": 596.9777777777779,
+                "ds_capacity_batches": 1971.0,
+                "feasible_batches": 596.9777777777779,
+                "good_batches": 585.0382222222223,
+                "up_utilization": 1.0,
+                "ds_utilization": 0.30288065843621403,
+                "annual_kg_good": 58178.540970666676
+              }
+            ],
+            "total_feasible_batches": 596.9777777777779,
+            "total_good_batches": 585.0382222222223,
+            "total_annual_kg": 58178.540970666676,
+            "weighted_up_utilization": 1.0,
+            "weighted_ds_utilization": 0.30288065843621403,
+            "bottleneck": "upstream",
+            "kg_p10": null,
+            "kg_p50": null,
+            "kg_p90": null
+          },
+          "capex_breakdown": {
+            "equip": 2306588.9580832724,
+            "building": 2774399.077253949,
+            "land": 460366.5897711624,
+            "install": 345988.34371249087,
+            "direct": 5426976.379049712,
+            "cont": 678372.047381214,
+            "wc": 542697.6379049713,
+            "lyos_needed": 2,
+            "licensing_fixed_total": 0.0,
+            "total": 6648046.064335897
+          },
+          "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 287.9%"
+        }
+      ],
+      "n_evaluations": 2124,
+      "convergence_history": null,
+      "selected_fermenter_volume": 1500.0,
+      "selected_reactors": 2,
+      "selected_ds_lines": 1
+    },
+    "sensitivity": null,
+    "warnings": [
+      "Production ratio is out of sensible range: 3.88x. (Target: 0.5x-1.5x)"
+    ],
+    "errors": [
+      "Optimizer best solution (3.88x) misses target by >5%."
+    ],
+    "calculation_time_s": 4.6462037563323975
+  },
+  "status": "completed",
+  "message": "Scenario completed successfully"
+}

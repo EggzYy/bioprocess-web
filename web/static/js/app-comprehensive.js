@@ -1062,7 +1062,9 @@ async function runScenario() {
     });
 
     if (response.ok) {
-      const results = await response.json();
+      const response_data = await response.json();
+      // Handle nested API response structure
+      const results = response_data.result || response_data;
       appState.results = results;
       displayResults(results);
       showAlert("Scenario completed successfully!", "success");
@@ -1096,8 +1098,8 @@ async function runOptimization() {
       },
       body: JSON.stringify({
         scenario: scenario, // Changed from base_scenario
-        max_reactors: 20,
-        max_ds_lines: 10,
+        max_reactors: 60, // Match original pricing_integrated.py
+        max_ds_lines: 12, // Match original pricing_integrated.py
         objectives: optimizationParams.objectives || ["irr", "capex"],
       }),
     });
@@ -1194,6 +1196,8 @@ function collectSensitivityParams() {
 
 // Results Display Functions
 function displayResults(results) {
+  console.log("Displaying results:", results);
+
   // Display KPIs
   displayKPIs(results.kpis);
 
@@ -1202,6 +1206,14 @@ function displayResults(results) {
 
   // Display economics results
   displayEconomicsResults(results.economics);
+
+  // Display equipment results
+  displayEquipmentResults(results.equipment);
+
+  // Display optimization results if available
+  if (results.optimization) {
+    displayOptimizationSummary(results.optimization);
+  }
 
   // Create charts
   createResultCharts(results);
@@ -1214,37 +1226,25 @@ function displayResults(results) {
 }
 
 function displayKPIs(kpis) {
-  const kpiContainer = document.getElementById("kpiResults");
-  if (!kpiContainer || !kpis) return;
+  if (!kpis) {
+    console.log("No KPI data available");
+    return;
+  }
 
-  kpiContainer.innerHTML = `
-        <div class="row">
-            <div class="col-md-3">
-                <div class="kpi-card">
-                    <h6>NPV</h6>
-                    <h3>$${formatNumber(kpis.npv || 0)}</h3>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="kpi-card">
-                    <h6>IRR</h6>
-                    <h3>${formatPercent(kpis.irr || 0)}</h3>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="kpi-card">
-                    <h6>Payback Period</h6>
-                    <h3>${formatNumber(kpis.payback_period || 0, 1)} years</h3>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="kpi-card">
-                    <h6>ROI</h6>
-                    <h3>${formatPercent(kpis.roi || 0)}</h3>
-                </div>
-            </div>
-        </div>
-    `;
+  console.log("Displaying KPIs:", kpis);
+
+  // Update individual KPI elements that exist in HTML
+  const npvElement = document.getElementById("kpiNPV");
+  const irrElement = document.getElementById("kpiIRR");
+  const paybackElement = document.getElementById("kpiPayback");
+  const capacityElement = document.getElementById("kpiCapacity");
+
+  if (npvElement) npvElement.textContent = `$${formatNumber(kpis.npv || 0)}`;
+  if (irrElement) irrElement.textContent = formatPercent(kpis.irr || 0);
+  if (paybackElement)
+    paybackElement.textContent = `${formatNumber(kpis.payback_years || 0, 1)} yrs`;
+  if (capacityElement)
+    capacityElement.textContent = `${formatNumber(kpis.tpa || 0, 1)} TPA`;
 }
 
 function displayCapacityResults(capacity) {
@@ -1276,31 +1276,80 @@ function displayCapacityResults(capacity) {
 }
 
 function displayEconomicsResults(economics) {
-  const container = document.getElementById("economicsResults");
-  if (!container || !economics) return;
+  if (!economics) {
+    console.log("No economics data available");
+    return;
+  }
 
-  container.innerHTML = `
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <td>Total CAPEX</td>
-                    <td>$${formatNumber(economics.total_capex || 0)}</td>
-                </tr>
-                <tr>
-                    <td>Annual OPEX</td>
-                    <td>$${formatNumber(economics.annual_opex || 0)}</td>
-                </tr>
-                <tr>
-                    <td>Annual Revenue</td>
-                    <td>$${formatNumber(economics.annual_revenue || 0)}</td>
-                </tr>
-                <tr>
-                    <td>Gross Margin</td>
-                    <td>${formatPercent(economics.gross_margin || 0)}</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
+  console.log("Displaying economics results:", economics);
+
+  // Log detailed economics for debugging
+  console.log("Economics Summary:", {
+    total_capex: economics.total_capex,
+    annual_opex: economics.total_annual_opex,
+    revenue: economics.revenue,
+    ebitda: economics.ebitda,
+    opex_per_kg: economics.opex_per_kg,
+  });
+}
+
+function displayEquipmentResults(equipment) {
+  if (!equipment) {
+    console.log("No equipment data available");
+    return;
+  }
+
+  console.log("Displaying equipment results:", equipment);
+
+  const specs = equipment.specifications || {};
+  const counts = equipment.counts || {};
+
+  // Log equipment details for debugging and future display
+  console.log("Equipment Configuration:", {
+    fermenter_volume: specs.fermenter_volume_l,
+    media_tank_volume: specs.media_tank_volume_l,
+    fermenter_count: counts.fermenters,
+    centrifuge_count: counts.centrifuges,
+  });
+
+  // Show important volume information in alert if media tank volume is 2500L
+  if (specs.media_tank_volume_l === 2500) {
+    console.log(
+      "🔍 MEDIA TANK is 2500L - this comes from fermenter " +
+        (specs.fermenter_volume_l || "unknown") +
+        "L × 1.25 ratio",
+    );
+  }
+}
+
+function displayOptimizationSummary(optimization) {
+  if (!optimization) {
+    console.log("No optimization data available");
+    return;
+  }
+
+  console.log("Displaying optimization summary:", optimization);
+
+  if (optimization.best_solution) {
+    const best = optimization.best_solution;
+    console.log("🎯 OPTIMIZATION RESULTS:", {
+      fermenter_volume: best.fermenter_volume_l,
+      reactors: best.reactors,
+      ds_lines: best.ds_lines,
+      capacity_tpa: (best.capacity_kg || 0) / 1000,
+      npv: best.npv,
+      irr: best.irr,
+      total_evaluations: optimization.total_evaluations,
+    });
+
+    // Show success message if significant optimization was performed
+    if (optimization.total_evaluations > 10) {
+      showAlert(
+        `Optimization completed: ${optimization.total_evaluations} evaluations in ${formatNumber(optimization.runtime_seconds || 0, 1)}s`,
+        "success",
+      );
+    }
+  }
 }
 
 function displayOptimizationResults(results) {

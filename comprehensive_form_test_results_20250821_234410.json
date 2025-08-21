@@ -1,0 +1,2683 @@
+{
+  "timestamp": "2025-08-21T23:44:10.987941",
+  "overall_summary": {
+    "successful_scenarios": 5,
+    "total_scenarios": 5,
+    "scenario_success_rate": 1.0,
+    "total_validations_passed": 36,
+    "total_validations": 39,
+    "overall_validation_rate": 0.9230769230769231,
+    "feature_status": {
+      "Basic Form Data": "\u2705",
+      "Equipment Optimization": "\u2705",
+      "Multiobjective Optimization": "\u2705",
+      "Sensitivity Analysis": "\u2705",
+      "Combined Features": "\u2753",
+      "Combined Optimization + Sensitivity": "\u2705"
+    }
+  },
+  "scenario_results": [
+    {
+      "test_name": "Basic Form Data",
+      "success": true,
+      "success_rate": 1.0,
+      "passed_tests": 6,
+      "total_tests": 6,
+      "validations": {
+        "target_tpa": {
+          "expected": 12.5,
+          "actual": 12.5,
+          "passed": true,
+          "test": "Target TPA should match form input"
+        },
+        "strain_name": {
+          "expected": "Test Lactobacillus",
+          "actual": "Test Lactobacillus",
+          "passed": true,
+          "test": "Strain name should match form input"
+        },
+        "fermentation_time": {
+          "expected": 22.0,
+          "actual": 22.0,
+          "passed": true,
+          "test": "Fermentation time should match form input"
+        },
+        "npv_positive": {
+          "test": "NPV should be positive (basic sanity check)",
+          "passed": true,
+          "value": 248108802.47610953
+        },
+        "irr_reasonable": {
+          "test": "IRR should be reasonable (0.1 to 5.0)",
+          "passed": true,
+          "value": 1.2691802185918672
+        },
+        "payback_reasonable": {
+          "test": "Payback should be reasonable (1-10 years)",
+          "passed": true,
+          "value": 1.547532329036493
+        }
+      },
+      "metrics": {
+        "npv": 248108802.47610953,
+        "irr": 1.2691802185918672,
+        "payback_years": 1.547532329036493,
+        "capex": 15665957.490900446,
+        "opex": 2804780.6242280263,
+        "target_tpa": 12.5,
+        "actual_tpa": 205.08514879999998,
+        "annual_revenue": 101517148.656,
+        "labor_cost": 1138200.0,
+        "utilities_cost": 92057.06065818183,
+        "maintenance_cost": 763890.0295698446,
+        "land_cost": 1007500.0,
+        "building_cost": 3720000.0,
+        "equipment_cost": 6944454.814271314,
+        "total_capex": 15665957.490900446,
+        "strain_name": "Test Lactobacillus",
+        "fermentation_time": 22.0,
+        "batch_mass_kg": 171.38,
+        "annual_kg_good": 205085.1488,
+        "optimization_completed": false,
+        "sensitivity_completed": false
+      },
+      "form_data": {
+        "name": "Basic Form Data Scenario",
+        "description": "Testing frontend form data collection - Basic Form Data Scenario",
+        "target_tpa": 12.5,
+        "strains": [
+          {
+            "name": "Test Lactobacillus",
+            "fermentation_time_h": 22.0,
+            "turnaround_time_h": 11.0,
+            "downstream_time_h": 6.0,
+            "yield_g_per_L": 95.0,
+            "media_cost_usd": 275.0,
+            "cryo_cost_usd": 210.0,
+            "utility_rate_ferm_kw": 380.0,
+            "utility_rate_cent_kw": 18.0,
+            "utility_rate_lyo_kw": 2.2,
+            "utility_cost_steam": 0.027,
+            "cv_ferm": 0.12,
+            "cv_turn": 0.12,
+            "cv_down": 0.12,
+            "respiration_type": "aerobic",
+            "requires_tff": true,
+            "downstream_complexity": 1.2
+          }
+        ],
+        "equipment": {
+          "reactors_total": 5,
+          "ds_lines_total": 3,
+          "reactor_allocation_policy": "inverse_ct",
+          "ds_allocation_policy": "inverse_ct",
+          "shared_downstream": true
+        },
+        "volumes": {
+          "base_fermenter_vol_l": 2200.0,
+          "volume_options_l": [
+            2200.0,
+            2800.0,
+            3200.0
+          ],
+          "working_volume_fraction": 0.82,
+          "seed_fermenter_ratio": 0.14,
+          "media_tank_ratio": 1.35
+        },
+        "economics": {
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5
+        },
+        "labor": {
+          "plant_manager_salary": 125000,
+          "fermentation_specialist_salary": 48000,
+          "downstream_process_operator_salary": 62000,
+          "general_technician_salary": 41000,
+          "qaqc_lab_tech_salary": 47000,
+          "maintenance_tech_salary": 47000,
+          "utility_operator_salary": 47000,
+          "logistics_clerk_salary": 47000,
+          "office_clerk_salary": 41000,
+          "min_fte": 18,
+          "fte_per_tpa": 1.2
+        },
+        "opex": {
+          "electricity_usd_per_kwh": 0.125,
+          "steam_usd_per_kg": 0.028,
+          "water_usd_per_m3": 0.0025,
+          "natural_gas_usd_per_mmbtu": 4.2,
+          "raw_materials_markup": 1.15,
+          "utilities_efficiency": 0.88
+        },
+        "capex": {
+          "land_cost_per_m2": 650,
+          "building_cost_per_m2": 2400,
+          "fermenter_base_cost": 175000,
+          "fermenter_scale_exponent": 0.65,
+          "centrifuge_cost": 240000,
+          "tff_skid_cost": 175000,
+          "lyophilizer_cost_per_m2": 58000,
+          "utilities_cost_factor": 0.28,
+          "installation_factor": 0.18,
+          "contingency_factor": 0.14,
+          "working_capital_months": 4,
+          "parity_mode": false
+        },
+        "prices": {
+          "product_prices": {
+            "yogurt": 475,
+            "lacto_bifido": 475,
+            "bacillus": 475,
+            "sacco": 575,
+            "default": 475
+          },
+          "raw_prices": {
+            "glucose": 0.88,
+            "yeast_extract": 6.8,
+            "peptone": 8.8,
+            "corn_steep_liquor": 0.68,
+            "sodium_chloride": 0.25,
+            "magnesium_sulfate": 1.2,
+            "potassium_phosphate": 2.1
+          }
+        },
+        "optimize_equipment": false,
+        "use_multiobjective": false,
+        "optimization": {
+          "enabled": false,
+          "simulation_type": "deterministic",
+          "objectives": [],
+          "min_tpa": 8.0,
+          "max_capex_usd": 15000000,
+          "min_utilization": 0.75,
+          "max_payback": 3.5,
+          "max_evaluations": 50,
+          "population_size": 20,
+          "n_generations": 10,
+          "n_monte_carlo_samples": 100,
+          "confidence_level": 0.96
+        },
+        "sensitivity": {
+          "enabled": false,
+          "parameters": [],
+          "delta_percentage": 0.12,
+          "grid_points": 3,
+          "n_samples": 100
+        },
+        "assumptions": {
+          "hours_per_year": 8760.0,
+          "upstream_availability": 0.92,
+          "downstream_availability": 0.9,
+          "quality_yield": 0.98,
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18
+        }
+      },
+      "api_result": {
+        "success": true,
+        "data": {
+          "job_id": null,
+          "result": {
+            "scenario_name": "Basic Form Data Scenario",
+            "timestamp": "2025-08-21T23:43:53.746345",
+            "kpis": {
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "tpa": 205.08514879999998,
+              "target_tpa": 12.5,
+              "capex": 15665957.490900446,
+              "opex": 2804780.6242280263,
+              "opex_per_kg": 13.676176167018616,
+              "ebitda_margin": 0.9723713612787502,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.3097643097643098,
+              "meets_tpa": 1.0,
+              "production_kg": 205085.1488
+            },
+            "capacity": {
+              "per_strain": [
+                {
+                  "name": "Test Lactobacillus",
+                  "fermentation_time_h": 22.0,
+                  "turnaround_time_h": 11.0,
+                  "downstream_time_h": 6.0,
+                  "batch_mass_kg": 171.38,
+                  "cv_ferm": 0.12,
+                  "cv_turn": 0.12,
+                  "cv_down": 0.12,
+                  "utility_rate_ferm_kw": 380.0,
+                  "utility_rate_cent_kw": 18.0,
+                  "utility_rate_lyo_kw": 2.2,
+                  "utility_cost_steam": 0.027,
+                  "ct_up_h": 33.0,
+                  "ct_ds_h": 6.0,
+                  "reactors_assigned": 5.0,
+                  "ds_lines_assigned": 3.0,
+                  "up_capacity_batches": 1221.0909090909092,
+                  "ds_capacity_batches": 3942.0,
+                  "feasible_batches": 1221.0909090909092,
+                  "good_batches": 1196.669090909091,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3097643097643098,
+                  "annual_kg_good": 205085.1488
+                }
+              ],
+              "total_feasible_batches": 1221.0909090909092,
+              "total_good_batches": 1196.669090909091,
+              "total_annual_kg": 205085.1488,
+              "weighted_up_utilization": 1.0,
+              "weighted_ds_utilization": 0.3097643097643098,
+              "bottleneck": "upstream",
+              "kg_p10": null,
+              "kg_p50": null,
+              "kg_p90": null
+            },
+            "equipment": {
+              "counts": {
+                "fermenters": 5,
+                "2200.0L_fermenters": 5,
+                "seed_fermenters": 4,
+                "media_tanks": 5,
+                "centrifuges": 3,
+                "tff_skids": 1,
+                "lyophilizers": 3,
+                "cone_mills": 1,
+                "v_blenders": 1,
+                "qc_labs": 1
+              },
+              "specifications": {
+                "fermenter_volume_l": 2200.0,
+                "seed_fermenter_volume_l": 308.00000000000006,
+                "media_tank_volume_l": 2970.0,
+                "lyophilizer_size_m2": 20,
+                "v_blender_volume_l": 500,
+                "strain_processing_requirements": [
+                  {
+                    "name": "Test Lactobacillus",
+                    "respiration_type": "aerobic",
+                    "requires_tff": false,
+                    "downstream_complexity": 1.0
+                  }
+                ],
+                "cost_breakdown": {
+                  "fermenters": {
+                    "unit_cost": 186184.4019258814,
+                    "total_cost": 930922.009629407,
+                    "count": 5,
+                    "volume_l": 2200.0
+                  },
+                  "downstream": {
+                    "centrifuges": {
+                      "count": 3,
+                      "unit_cost": 240000.0,
+                      "total_cost": 720000.0
+                    },
+                    "tff_skids": {
+                      "count": 1,
+                      "unit_cost": 175000.0,
+                      "total_cost": 175000.0
+                    },
+                    "lyophilizers": {
+                      "count": 3,
+                      "unit_cost": 1160000.0,
+                      "total_cost": 3480000.0,
+                      "size_m2": 20,
+                      "complexity_factor": 1.0
+                    },
+                    "total_downstream_cost": 4375000.0
+                  },
+                  "auxiliary": {
+                    "seed_fermenters": {
+                      "count": 4,
+                      "volume_l": 308.00000000000006,
+                      "unit_cost": 15561.36795649899,
+                      "total_cost": 62245.47182599596
+                    },
+                    "media_tanks": {
+                      "count": 5,
+                      "volume_l": 2970.0,
+                      "unit_cost": 45257.46656318223,
+                      "total_cost": 226287.33281591116
+                    },
+                    "cone_mill": {
+                      "count": 1,
+                      "unit_cost": 50000,
+                      "total_cost": 50000
+                    },
+                    "v_blender": {
+                      "count": 1,
+                      "volume_l": 500,
+                      "unit_cost": 30000,
+                      "total_cost": 30000
+                    },
+                    "qc_lab": {
+                      "count": 1,
+                      "unit_cost": 250000,
+                      "total_cost": 250000
+                    },
+                    "total_auxiliary_cost": 618532.8046419071
+                  },
+                  "utilities": {
+                    "autoclave": 100000,
+                    "purified_water": 150000,
+                    "wfi_system": 400000,
+                    "clean_steam": 120000,
+                    "cip_system": 250000,
+                    "total_utilities": 1020000
+                  }
+                }
+              },
+              "equipment_cost": 6944454.814271314,
+              "installation_cost": 1250001.8665688364,
+              "utilities_cost": 1020000.0,
+              "total_installed_cost": 8194456.68084015
+            },
+            "economics": {
+              "annual_revenue": 101517148.656,
+              "raw_materials_cost": 654383.534,
+              "utilities_cost": 92057.06065818183,
+              "labor_cost": 1138200.0,
+              "maintenance_cost": 763890.0295698446,
+              "ga_other_cost": 156250.0,
+              "total_opex": 2804780.6242280263,
+              "land_cost": 1007500.0,
+              "building_cost": 3720000.0,
+              "equipment_cost": 6944454.814271314,
+              "contingency": 1809073.935317621,
+              "working_capital": 934926.8747426753,
+              "total_capex": 15665957.490900446,
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "ebitda_margin": 0.9723713612787502,
+              "cash_flows": [
+                -10966170.24363031,
+                -4699787.247270133,
+                28611931.497210838,
+                42826512.493786,
+                53487448.241217375,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495
+              ],
+              "licensing_fixed": 0.0,
+              "licensing_royalty_rate": 0.0
+            },
+            "optimization": null,
+            "sensitivity": null,
+            "warnings": [
+              "Production ratio is out of sensible range: 16.41x. (Target: 0.5x-1.5x)"
+            ],
+            "errors": [],
+            "calculation_time_s": 0.004418611526489258
+          },
+          "status": "completed",
+          "message": "Scenario completed successfully"
+        }
+      }
+    },
+    {
+      "test_name": "Equipment Optimization",
+      "success": true,
+      "success_rate": 0.875,
+      "passed_tests": 7,
+      "total_tests": 8,
+      "validations": {
+        "target_tpa": {
+          "expected": 12.5,
+          "actual": 12.5,
+          "passed": true,
+          "test": "Target TPA should match form input"
+        },
+        "strain_name": {
+          "expected": "Test Lactobacillus",
+          "actual": "Test Lactobacillus",
+          "passed": true,
+          "test": "Strain name should match form input"
+        },
+        "fermentation_time": {
+          "expected": 22.0,
+          "actual": 22.0,
+          "passed": true,
+          "test": "Fermentation time should match form input"
+        },
+        "npv_positive": {
+          "test": "NPV should be positive (basic sanity check)",
+          "passed": true,
+          "value": 93021813.57911158
+        },
+        "irr_reasonable": {
+          "test": "IRR should be reasonable (0.1 to 5.0)",
+          "passed": true,
+          "value": 0.903842558241053
+        },
+        "payback_reasonable": {
+          "test": "Payback should be reasonable (1-10 years)",
+          "passed": true,
+          "value": 1.9460630267540453
+        },
+        "optimization_completed": {
+          "test": "Optimization should complete successfully",
+          "passed": true,
+          "value": true
+        },
+        "optimization_evaluations": {
+          "test": "Optimization should perform multiple evaluations",
+          "passed": false,
+          "value": 1
+        }
+      },
+      "metrics": {
+        "npv": 93021813.57911158,
+        "irr": 0.903842558241053,
+        "payback_years": 1.9460630267540453,
+        "capex": 10644969.82396024,
+        "opex": 1969116.9498812964,
+        "target_tpa": 12.5,
+        "actual_tpa": 82.03405952000001,
+        "annual_revenue": 40606859.462400004,
+        "labor_cost": 1138200.0,
+        "utilities_cost": 36822.824263272734,
+        "maintenance_cost": 376090.71201802377,
+        "land_cost": 1007500.0,
+        "building_cost": 3720000.0,
+        "equipment_cost": 3419006.4728911254,
+        "total_capex": 10644969.82396024,
+        "strain_name": "Test Lactobacillus",
+        "fermentation_time": 22.0,
+        "batch_mass_kg": 171.38,
+        "annual_kg_good": 82034.05952000001,
+        "optimization_completed": true,
+        "best_solution_npv": 95865876.18119116,
+        "best_solution_irr": 1.0991092887105727,
+        "optimization_evaluations": 1,
+        "pareto_front_size": 1,
+        "sensitivity_completed": false
+      },
+      "form_data": {
+        "name": "Equipment Optimization Scenario",
+        "description": "Testing frontend form data collection - Equipment Optimization Scenario",
+        "target_tpa": 12.5,
+        "strains": [
+          {
+            "name": "Test Lactobacillus",
+            "fermentation_time_h": 22.0,
+            "turnaround_time_h": 11.0,
+            "downstream_time_h": 6.0,
+            "yield_g_per_L": 95.0,
+            "media_cost_usd": 275.0,
+            "cryo_cost_usd": 210.0,
+            "utility_rate_ferm_kw": 380.0,
+            "utility_rate_cent_kw": 18.0,
+            "utility_rate_lyo_kw": 2.2,
+            "utility_cost_steam": 0.027,
+            "cv_ferm": 0.12,
+            "cv_turn": 0.12,
+            "cv_down": 0.12,
+            "respiration_type": "aerobic",
+            "requires_tff": true,
+            "downstream_complexity": 1.2
+          }
+        ],
+        "equipment": {
+          "reactors_total": 5,
+          "ds_lines_total": 3,
+          "reactor_allocation_policy": "inverse_ct",
+          "ds_allocation_policy": "inverse_ct",
+          "shared_downstream": true
+        },
+        "volumes": {
+          "base_fermenter_vol_l": 2200.0,
+          "volume_options_l": [
+            2200.0,
+            2800.0,
+            3200.0
+          ],
+          "working_volume_fraction": 0.82,
+          "seed_fermenter_ratio": 0.14,
+          "media_tank_ratio": 1.35
+        },
+        "economics": {
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5
+        },
+        "labor": {
+          "plant_manager_salary": 125000,
+          "fermentation_specialist_salary": 48000,
+          "downstream_process_operator_salary": 62000,
+          "general_technician_salary": 41000,
+          "qaqc_lab_tech_salary": 47000,
+          "maintenance_tech_salary": 47000,
+          "utility_operator_salary": 47000,
+          "logistics_clerk_salary": 47000,
+          "office_clerk_salary": 41000,
+          "min_fte": 18,
+          "fte_per_tpa": 1.2
+        },
+        "opex": {
+          "electricity_usd_per_kwh": 0.125,
+          "steam_usd_per_kg": 0.028,
+          "water_usd_per_m3": 0.0025,
+          "natural_gas_usd_per_mmbtu": 4.2,
+          "raw_materials_markup": 1.15,
+          "utilities_efficiency": 0.88
+        },
+        "capex": {
+          "land_cost_per_m2": 650,
+          "building_cost_per_m2": 2400,
+          "fermenter_base_cost": 175000,
+          "fermenter_scale_exponent": 0.65,
+          "centrifuge_cost": 240000,
+          "tff_skid_cost": 175000,
+          "lyophilizer_cost_per_m2": 58000,
+          "utilities_cost_factor": 0.28,
+          "installation_factor": 0.18,
+          "contingency_factor": 0.14,
+          "working_capital_months": 4,
+          "parity_mode": false
+        },
+        "prices": {
+          "product_prices": {
+            "yogurt": 475,
+            "lacto_bifido": 475,
+            "bacillus": 475,
+            "sacco": 575,
+            "default": 475
+          },
+          "raw_prices": {
+            "glucose": 0.88,
+            "yeast_extract": 6.8,
+            "peptone": 8.8,
+            "corn_steep_liquor": 0.68,
+            "sodium_chloride": 0.25,
+            "magnesium_sulfate": 1.2,
+            "potassium_phosphate": 2.1
+          }
+        },
+        "optimize_equipment": true,
+        "use_multiobjective": false,
+        "optimization": {
+          "enabled": true,
+          "simulation_type": "deterministic",
+          "objectives": [],
+          "min_tpa": 8.0,
+          "max_capex_usd": 15000000,
+          "min_utilization": 0.75,
+          "max_payback": 3.5,
+          "max_evaluations": 50,
+          "population_size": 20,
+          "n_generations": 10,
+          "n_monte_carlo_samples": 100,
+          "confidence_level": 0.96
+        },
+        "sensitivity": {
+          "enabled": false,
+          "parameters": [],
+          "delta_percentage": 0.12,
+          "grid_points": 3,
+          "n_samples": 100
+        },
+        "assumptions": {
+          "hours_per_year": 8760.0,
+          "upstream_availability": 0.92,
+          "downstream_availability": 0.9,
+          "quality_yield": 0.98,
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18
+        }
+      },
+      "api_result": {
+        "success": true,
+        "data": {
+          "job_id": null,
+          "result": {
+            "scenario_name": "Equipment Optimization Scenario",
+            "timestamp": "2025-08-21T23:44:00.376232",
+            "kpis": {
+              "npv": 93021813.57911158,
+              "irr": 0.903842558241053,
+              "payback_years": 1.9460630267540453,
+              "tpa": 82.03405952000001,
+              "target_tpa": 12.5,
+              "capex": 10644969.82396024,
+              "opex": 1969116.9498812964,
+              "opex_per_kg": 24.003651183460246,
+              "ebitda_margin": 0.9515077753869491,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.3717171717171718,
+              "meets_tpa": 1.0,
+              "production_kg": 82034.05952000001
+            },
+            "capacity": {
+              "per_strain": [
+                {
+                  "name": "Test Lactobacillus",
+                  "fermentation_time_h": 22.0,
+                  "turnaround_time_h": 11.0,
+                  "downstream_time_h": 6.0,
+                  "batch_mass_kg": 171.38,
+                  "cv_ferm": 0.12,
+                  "cv_turn": 0.12,
+                  "cv_down": 0.12,
+                  "utility_rate_ferm_kw": 380.0,
+                  "utility_rate_cent_kw": 18.0,
+                  "utility_rate_lyo_kw": 2.2,
+                  "utility_cost_steam": 0.027,
+                  "ct_up_h": 33.0,
+                  "ct_ds_h": 6.0,
+                  "reactors_assigned": 2.0,
+                  "ds_lines_assigned": 1.0,
+                  "up_capacity_batches": 488.4363636363637,
+                  "ds_capacity_batches": 1314.0,
+                  "feasible_batches": 488.4363636363637,
+                  "good_batches": 478.6676363636364,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3717171717171718,
+                  "annual_kg_good": 82034.05952000001
+                }
+              ],
+              "total_feasible_batches": 488.4363636363637,
+              "total_good_batches": 478.6676363636364,
+              "total_annual_kg": 82034.05952000001,
+              "weighted_up_utilization": 1.0,
+              "weighted_ds_utilization": 0.3717171717171718,
+              "bottleneck": "upstream",
+              "kg_p10": null,
+              "kg_p50": null,
+              "kg_p90": null
+            },
+            "equipment": {
+              "counts": {
+                "fermenters": 2,
+                "2200.0L_fermenters": 2,
+                "seed_fermenters": 2,
+                "media_tanks": 2,
+                "centrifuges": 1,
+                "tff_skids": 1,
+                "lyophilizers": 1,
+                "cone_mills": 1,
+                "v_blenders": 1,
+                "qc_labs": 1
+              },
+              "specifications": {
+                "fermenter_volume_l": 2200.0,
+                "seed_fermenter_volume_l": 308.00000000000006,
+                "media_tank_volume_l": 2970.0,
+                "lyophilizer_size_m2": 20,
+                "v_blender_volume_l": 500,
+                "strain_processing_requirements": [
+                  {
+                    "name": "Test Lactobacillus",
+                    "respiration_type": "aerobic",
+                    "requires_tff": false,
+                    "downstream_complexity": 1.0
+                  }
+                ],
+                "cost_breakdown": {
+                  "fermenters": {
+                    "unit_cost": 186184.4019258814,
+                    "total_cost": 372368.8038517628,
+                    "count": 2,
+                    "volume_l": 2200.0
+                  },
+                  "downstream": {
+                    "centrifuges": {
+                      "count": 1,
+                      "unit_cost": 240000.0,
+                      "total_cost": 240000.0
+                    },
+                    "tff_skids": {
+                      "count": 1,
+                      "unit_cost": 175000.0,
+                      "total_cost": 175000.0
+                    },
+                    "lyophilizers": {
+                      "count": 1,
+                      "unit_cost": 1160000.0,
+                      "total_cost": 1160000.0,
+                      "size_m2": 20,
+                      "complexity_factor": 1.0
+                    },
+                    "total_downstream_cost": 1575000.0
+                  },
+                  "auxiliary": {
+                    "seed_fermenters": {
+                      "count": 2,
+                      "volume_l": 308.00000000000006,
+                      "unit_cost": 15561.36795649899,
+                      "total_cost": 31122.73591299798
+                    },
+                    "media_tanks": {
+                      "count": 2,
+                      "volume_l": 2970.0,
+                      "unit_cost": 45257.46656318223,
+                      "total_cost": 90514.93312636446
+                    },
+                    "cone_mill": {
+                      "count": 1,
+                      "unit_cost": 50000,
+                      "total_cost": 50000
+                    },
+                    "v_blender": {
+                      "count": 1,
+                      "volume_l": 500,
+                      "unit_cost": 30000,
+                      "total_cost": 30000
+                    },
+                    "qc_lab": {
+                      "count": 1,
+                      "unit_cost": 250000,
+                      "total_cost": 250000
+                    },
+                    "total_auxiliary_cost": 451637.66903936246
+                  },
+                  "utilities": {
+                    "autoclave": 100000,
+                    "purified_water": 150000,
+                    "wfi_system": 400000,
+                    "clean_steam": 120000,
+                    "cip_system": 250000,
+                    "total_utilities": 1020000
+                  }
+                }
+              },
+              "equipment_cost": 3419006.4728911254,
+              "installation_cost": 615421.1651204026,
+              "utilities_cost": 1020000.0,
+              "total_installed_cost": 4034427.638011528
+            },
+            "economics": {
+              "annual_revenue": 40606859.462400004,
+              "raw_materials_cost": 261753.4136,
+              "utilities_cost": 36822.824263272734,
+              "labor_cost": 1138200.0,
+              "maintenance_cost": 376090.71201802377,
+              "ga_other_cost": 156250.0,
+              "total_opex": 1969116.9498812964,
+              "land_cost": 1007500.0,
+              "building_cost": 3720000.0,
+              "equipment_cost": 3419006.4728911254,
+              "contingency": 1226669.869321614,
+              "working_capital": 656372.3166270987,
+              "total_capex": 10644969.82396024,
+              "npv": 93021813.57911158,
+              "irr": 0.903842558241053,
+              "payback_years": 1.9460630267540453,
+              "ebitda_margin": 0.9515077753869491,
+              "cash_flows": [
+                -7451478.876772168,
+                -3193490.9471880724,
+                11251861.158218257,
+                16815696.08002095,
+                20988572.27137297,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316
+              ],
+              "licensing_fixed": 0.0,
+              "licensing_royalty_rate": 0.0
+            },
+            "optimization": {
+              "best_solution": {
+                "reactors": 2,
+                "ds_lines": 1,
+                "fermenter_volume_l": 2200.0,
+                "meets_capacity": true,
+                "npv": 95865876.18119116,
+                "irr": 1.0991092887105727,
+                "capex": 7788861.286482907,
+                "opex_per_kg": 22.837456803763647,
+                "capacity_kg": 82034.05952000001,
+                "excess_ratio": 5.562724761600001,
+                "utilization": 0.685858585858586,
+                "payback_years": 1.692583802742515,
+                "ebitda_margin": 0.9538637236287604,
+                "up_utilization": 1.0,
+                "ds_utilization": 0.3717171717171718,
+                "bottleneck": "upstream",
+                "economics": {
+                  "annual_revenue": 40606859.462400004,
+                  "raw_materials_cost": 261753.4136,
+                  "utilities_cost": 36822.824263272734,
+                  "labor_cost": 1138200.0,
+                  "maintenance_cost": 280423.0528621035,
+                  "ga_other_cost": 156250.0,
+                  "total_opex": 1873449.2907253762,
+                  "land_cost": 514713.21323044616,
+                  "building_cost": 3426558.5587653536,
+                  "equipment_cost": 2549300.4805645775,
+                  "contingency": 794781.7639268272,
+                  "working_capital": 635825.4111414618,
+                  "total_capex": 7788861.286482907,
+                  "npv": 95865876.18119116,
+                  "irr": 1.0991092887105727,
+                  "payback_years": 1.692583802742515,
+                  "ebitda_margin": 0.9538637236287604,
+                  "cash_flows": [
+                    -5452202.900538035,
+                    -2336658.385944872,
+                    11246092.177784594,
+                    16823703.242505737,
+                    21006911.5410466,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166
+                  ],
+                  "licensing_fixed": 0.0,
+                  "licensing_royalty_rate": 0.0
+                },
+                "capacity": {
+                  "per_strain": [
+                    {
+                      "name": "Test Lactobacillus",
+                      "fermentation_time_h": 22.0,
+                      "turnaround_time_h": 11.0,
+                      "downstream_time_h": 6.0,
+                      "batch_mass_kg": 171.38,
+                      "cv_ferm": 0.12,
+                      "cv_turn": 0.12,
+                      "cv_down": 0.12,
+                      "utility_rate_ferm_kw": 380.0,
+                      "utility_rate_cent_kw": 18.0,
+                      "utility_rate_lyo_kw": 2.2,
+                      "utility_cost_steam": 0.027,
+                      "ct_up_h": 33.0,
+                      "ct_ds_h": 6.0,
+                      "reactors_assigned": 2.0,
+                      "ds_lines_assigned": 1.0,
+                      "up_capacity_batches": 488.4363636363637,
+                      "ds_capacity_batches": 1314.0,
+                      "feasible_batches": 488.4363636363637,
+                      "good_batches": 478.6676363636364,
+                      "up_utilization": 1.0,
+                      "ds_utilization": 0.3717171717171718,
+                      "annual_kg_good": 82034.05952000001
+                    }
+                  ],
+                  "total_feasible_batches": 488.4363636363637,
+                  "total_good_batches": 478.6676363636364,
+                  "total_annual_kg": 82034.05952000001,
+                  "weighted_up_utilization": 1.0,
+                  "weighted_ds_utilization": 0.3717171717171718,
+                  "bottleneck": "upstream",
+                  "kg_p10": null,
+                  "kg_p50": null,
+                  "kg_p90": null
+                },
+                "capex_breakdown": {
+                  "equip": 2549300.4805645775,
+                  "building": 3426558.5587653536,
+                  "land": 514713.21323044616,
+                  "install": 382395.0720846866,
+                  "direct": 6358254.111414618,
+                  "cont": 794781.7639268272,
+                  "wc": 635825.4111414618,
+                  "lyos_needed": 2,
+                  "licensing_fixed_total": 0.0,
+                  "total": 7788861.286482907
+                },
+                "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 556.3%"
+              },
+              "pareto_front": [
+                {
+                  "reactors": 2,
+                  "ds_lines": 1,
+                  "fermenter_volume_l": 2200.0,
+                  "meets_capacity": true,
+                  "npv": 95865876.18119116,
+                  "irr": 1.0991092887105727,
+                  "capex": 7788861.286482907,
+                  "opex_per_kg": 22.837456803763647,
+                  "capacity_kg": 82034.05952000001,
+                  "excess_ratio": 5.562724761600001,
+                  "utilization": 0.685858585858586,
+                  "payback_years": 1.692583802742515,
+                  "ebitda_margin": 0.9538637236287604,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3717171717171718,
+                  "bottleneck": "upstream",
+                  "economics": {
+                    "annual_revenue": 40606859.462400004,
+                    "raw_materials_cost": 261753.4136,
+                    "utilities_cost": 36822.824263272734,
+                    "labor_cost": 1138200.0,
+                    "maintenance_cost": 280423.0528621035,
+                    "ga_other_cost": 156250.0,
+                    "total_opex": 1873449.2907253762,
+                    "land_cost": 514713.21323044616,
+                    "building_cost": 3426558.5587653536,
+                    "equipment_cost": 2549300.4805645775,
+                    "contingency": 794781.7639268272,
+                    "working_capital": 635825.4111414618,
+                    "total_capex": 7788861.286482907,
+                    "npv": 95865876.18119116,
+                    "irr": 1.0991092887105727,
+                    "payback_years": 1.692583802742515,
+                    "ebitda_margin": 0.9538637236287604,
+                    "cash_flows": [
+                      -5452202.900538035,
+                      -2336658.385944872,
+                      11246092.177784594,
+                      16823703.242505737,
+                      21006911.5410466,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166
+                    ],
+                    "licensing_fixed": 0.0,
+                    "licensing_royalty_rate": 0.0
+                  },
+                  "capacity": {
+                    "per_strain": [
+                      {
+                        "name": "Test Lactobacillus",
+                        "fermentation_time_h": 22.0,
+                        "turnaround_time_h": 11.0,
+                        "downstream_time_h": 6.0,
+                        "batch_mass_kg": 171.38,
+                        "cv_ferm": 0.12,
+                        "cv_turn": 0.12,
+                        "cv_down": 0.12,
+                        "utility_rate_ferm_kw": 380.0,
+                        "utility_rate_cent_kw": 18.0,
+                        "utility_rate_lyo_kw": 2.2,
+                        "utility_cost_steam": 0.027,
+                        "ct_up_h": 33.0,
+                        "ct_ds_h": 6.0,
+                        "reactors_assigned": 2.0,
+                        "ds_lines_assigned": 1.0,
+                        "up_capacity_batches": 488.4363636363637,
+                        "ds_capacity_batches": 1314.0,
+                        "feasible_batches": 488.4363636363637,
+                        "good_batches": 478.6676363636364,
+                        "up_utilization": 1.0,
+                        "ds_utilization": 0.3717171717171718,
+                        "annual_kg_good": 82034.05952000001
+                      }
+                    ],
+                    "total_feasible_batches": 488.4363636363637,
+                    "total_good_batches": 478.6676363636364,
+                    "total_annual_kg": 82034.05952000001,
+                    "weighted_up_utilization": 1.0,
+                    "weighted_ds_utilization": 0.3717171717171718,
+                    "bottleneck": "upstream",
+                    "kg_p10": null,
+                    "kg_p50": null,
+                    "kg_p90": null
+                  },
+                  "capex_breakdown": {
+                    "equip": 2549300.4805645775,
+                    "building": 3426558.5587653536,
+                    "land": 514713.21323044616,
+                    "install": 382395.0720846866,
+                    "direct": 6358254.111414618,
+                    "cont": 794781.7639268272,
+                    "wc": 635825.4111414618,
+                    "lyos_needed": 2,
+                    "licensing_fixed_total": 0.0,
+                    "total": 7788861.286482907
+                  },
+                  "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 556.3%"
+                }
+              ],
+              "n_evaluations": 2124,
+              "convergence_history": null,
+              "selected_fermenter_volume": 2200.0,
+              "selected_reactors": 2,
+              "selected_ds_lines": 1
+            },
+            "sensitivity": null,
+            "warnings": [
+              "Production ratio is out of sensible range: 6.56x. (Target: 0.5x-1.5x)"
+            ],
+            "errors": [
+              "Optimizer best solution (6.56x) misses target by >5%."
+            ],
+            "calculation_time_s": 4.626525402069092
+          },
+          "status": "completed",
+          "message": "Scenario completed successfully"
+        }
+      }
+    },
+    {
+      "test_name": "Multiobjective Optimization",
+      "success": true,
+      "success_rate": 0.8571428571428571,
+      "passed_tests": 6,
+      "total_tests": 7,
+      "validations": {
+        "target_tpa": {
+          "expected": 12.5,
+          "actual": 12.5,
+          "passed": true,
+          "test": "Target TPA should match form input"
+        },
+        "strain_name": {
+          "expected": "Test Lactobacillus",
+          "actual": "Test Lactobacillus",
+          "passed": true,
+          "test": "Strain name should match form input"
+        },
+        "fermentation_time": {
+          "expected": 22.0,
+          "actual": 22.0,
+          "passed": true,
+          "test": "Fermentation time should match form input"
+        },
+        "npv_positive": {
+          "test": "NPV should be positive (basic sanity check)",
+          "passed": true,
+          "value": 248108802.47610953
+        },
+        "irr_reasonable": {
+          "test": "IRR should be reasonable (0.1 to 5.0)",
+          "passed": true,
+          "value": 1.2691802185918672
+        },
+        "payback_reasonable": {
+          "test": "Payback should be reasonable (1-10 years)",
+          "passed": true,
+          "value": 1.547532329036493
+        },
+        "optimization_completed": {
+          "test": "Optimization should complete successfully",
+          "passed": false,
+          "value": false
+        }
+      },
+      "metrics": {
+        "npv": 248108802.47610953,
+        "irr": 1.2691802185918672,
+        "payback_years": 1.547532329036493,
+        "capex": 15665957.490900446,
+        "opex": 2804780.6242280263,
+        "target_tpa": 12.5,
+        "actual_tpa": 205.08514879999998,
+        "annual_revenue": 101517148.656,
+        "labor_cost": 1138200.0,
+        "utilities_cost": 92057.06065818183,
+        "maintenance_cost": 763890.0295698446,
+        "land_cost": 1007500.0,
+        "building_cost": 3720000.0,
+        "equipment_cost": 6944454.814271314,
+        "total_capex": 15665957.490900446,
+        "strain_name": "Test Lactobacillus",
+        "fermentation_time": 22.0,
+        "batch_mass_kg": 171.38,
+        "annual_kg_good": 205085.1488,
+        "optimization_completed": false,
+        "sensitivity_completed": false
+      },
+      "form_data": {
+        "name": "Multiobjective Optimization Scenario",
+        "description": "Testing frontend form data collection - Multiobjective Optimization Scenario",
+        "target_tpa": 12.5,
+        "strains": [
+          {
+            "name": "Test Lactobacillus",
+            "fermentation_time_h": 22.0,
+            "turnaround_time_h": 11.0,
+            "downstream_time_h": 6.0,
+            "yield_g_per_L": 95.0,
+            "media_cost_usd": 275.0,
+            "cryo_cost_usd": 210.0,
+            "utility_rate_ferm_kw": 380.0,
+            "utility_rate_cent_kw": 18.0,
+            "utility_rate_lyo_kw": 2.2,
+            "utility_cost_steam": 0.027,
+            "cv_ferm": 0.12,
+            "cv_turn": 0.12,
+            "cv_down": 0.12,
+            "respiration_type": "aerobic",
+            "requires_tff": true,
+            "downstream_complexity": 1.2
+          }
+        ],
+        "equipment": {
+          "reactors_total": 5,
+          "ds_lines_total": 3,
+          "reactor_allocation_policy": "inverse_ct",
+          "ds_allocation_policy": "inverse_ct",
+          "shared_downstream": true
+        },
+        "volumes": {
+          "base_fermenter_vol_l": 2200.0,
+          "volume_options_l": [
+            2200.0,
+            2800.0,
+            3200.0
+          ],
+          "working_volume_fraction": 0.82,
+          "seed_fermenter_ratio": 0.14,
+          "media_tank_ratio": 1.35
+        },
+        "economics": {
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5
+        },
+        "labor": {
+          "plant_manager_salary": 125000,
+          "fermentation_specialist_salary": 48000,
+          "downstream_process_operator_salary": 62000,
+          "general_technician_salary": 41000,
+          "qaqc_lab_tech_salary": 47000,
+          "maintenance_tech_salary": 47000,
+          "utility_operator_salary": 47000,
+          "logistics_clerk_salary": 47000,
+          "office_clerk_salary": 41000,
+          "min_fte": 18,
+          "fte_per_tpa": 1.2
+        },
+        "opex": {
+          "electricity_usd_per_kwh": 0.125,
+          "steam_usd_per_kg": 0.028,
+          "water_usd_per_m3": 0.0025,
+          "natural_gas_usd_per_mmbtu": 4.2,
+          "raw_materials_markup": 1.15,
+          "utilities_efficiency": 0.88
+        },
+        "capex": {
+          "land_cost_per_m2": 650,
+          "building_cost_per_m2": 2400,
+          "fermenter_base_cost": 175000,
+          "fermenter_scale_exponent": 0.65,
+          "centrifuge_cost": 240000,
+          "tff_skid_cost": 175000,
+          "lyophilizer_cost_per_m2": 58000,
+          "utilities_cost_factor": 0.28,
+          "installation_factor": 0.18,
+          "contingency_factor": 0.14,
+          "working_capital_months": 4,
+          "parity_mode": false
+        },
+        "prices": {
+          "product_prices": {
+            "yogurt": 475,
+            "lacto_bifido": 475,
+            "bacillus": 475,
+            "sacco": 575,
+            "default": 475
+          },
+          "raw_prices": {
+            "glucose": 0.88,
+            "yeast_extract": 6.8,
+            "peptone": 8.8,
+            "corn_steep_liquor": 0.68,
+            "sodium_chloride": 0.25,
+            "magnesium_sulfate": 1.2,
+            "potassium_phosphate": 2.1
+          }
+        },
+        "optimize_equipment": false,
+        "use_multiobjective": true,
+        "optimization": {
+          "enabled": true,
+          "simulation_type": "deterministic",
+          "objectives": [
+            "npv",
+            "irr"
+          ],
+          "min_tpa": 8.0,
+          "max_capex_usd": 15000000,
+          "min_utilization": 0.75,
+          "max_payback": 3.5,
+          "max_evaluations": 50,
+          "population_size": 20,
+          "n_generations": 10,
+          "n_monte_carlo_samples": 100,
+          "confidence_level": 0.96
+        },
+        "sensitivity": {
+          "enabled": false,
+          "parameters": [],
+          "delta_percentage": 0.12,
+          "grid_points": 3,
+          "n_samples": 100
+        },
+        "assumptions": {
+          "hours_per_year": 8760.0,
+          "upstream_availability": 0.92,
+          "downstream_availability": 0.9,
+          "quality_yield": 0.98,
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18
+        }
+      },
+      "api_result": {
+        "success": true,
+        "data": {
+          "job_id": null,
+          "result": {
+            "scenario_name": "Multiobjective Optimization Scenario",
+            "timestamp": "2025-08-21T23:44:02.382067",
+            "kpis": {
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "tpa": 205.08514879999998,
+              "target_tpa": 12.5,
+              "capex": 15665957.490900446,
+              "opex": 2804780.6242280263,
+              "opex_per_kg": 13.676176167018616,
+              "ebitda_margin": 0.9723713612787502,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.3097643097643098,
+              "meets_tpa": 1.0,
+              "production_kg": 205085.1488
+            },
+            "capacity": {
+              "per_strain": [
+                {
+                  "name": "Test Lactobacillus",
+                  "fermentation_time_h": 22.0,
+                  "turnaround_time_h": 11.0,
+                  "downstream_time_h": 6.0,
+                  "batch_mass_kg": 171.38,
+                  "cv_ferm": 0.12,
+                  "cv_turn": 0.12,
+                  "cv_down": 0.12,
+                  "utility_rate_ferm_kw": 380.0,
+                  "utility_rate_cent_kw": 18.0,
+                  "utility_rate_lyo_kw": 2.2,
+                  "utility_cost_steam": 0.027,
+                  "ct_up_h": 33.0,
+                  "ct_ds_h": 6.0,
+                  "reactors_assigned": 5.0,
+                  "ds_lines_assigned": 3.0,
+                  "up_capacity_batches": 1221.0909090909092,
+                  "ds_capacity_batches": 3942.0,
+                  "feasible_batches": 1221.0909090909092,
+                  "good_batches": 1196.669090909091,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3097643097643098,
+                  "annual_kg_good": 205085.1488
+                }
+              ],
+              "total_feasible_batches": 1221.0909090909092,
+              "total_good_batches": 1196.669090909091,
+              "total_annual_kg": 205085.1488,
+              "weighted_up_utilization": 1.0,
+              "weighted_ds_utilization": 0.3097643097643098,
+              "bottleneck": "upstream",
+              "kg_p10": null,
+              "kg_p50": null,
+              "kg_p90": null
+            },
+            "equipment": {
+              "counts": {
+                "fermenters": 5,
+                "2200.0L_fermenters": 5,
+                "seed_fermenters": 4,
+                "media_tanks": 5,
+                "centrifuges": 3,
+                "tff_skids": 1,
+                "lyophilizers": 3,
+                "cone_mills": 1,
+                "v_blenders": 1,
+                "qc_labs": 1
+              },
+              "specifications": {
+                "fermenter_volume_l": 2200.0,
+                "seed_fermenter_volume_l": 308.00000000000006,
+                "media_tank_volume_l": 2970.0,
+                "lyophilizer_size_m2": 20,
+                "v_blender_volume_l": 500,
+                "strain_processing_requirements": [
+                  {
+                    "name": "Test Lactobacillus",
+                    "respiration_type": "aerobic",
+                    "requires_tff": false,
+                    "downstream_complexity": 1.0
+                  }
+                ],
+                "cost_breakdown": {
+                  "fermenters": {
+                    "unit_cost": 186184.4019258814,
+                    "total_cost": 930922.009629407,
+                    "count": 5,
+                    "volume_l": 2200.0
+                  },
+                  "downstream": {
+                    "centrifuges": {
+                      "count": 3,
+                      "unit_cost": 240000.0,
+                      "total_cost": 720000.0
+                    },
+                    "tff_skids": {
+                      "count": 1,
+                      "unit_cost": 175000.0,
+                      "total_cost": 175000.0
+                    },
+                    "lyophilizers": {
+                      "count": 3,
+                      "unit_cost": 1160000.0,
+                      "total_cost": 3480000.0,
+                      "size_m2": 20,
+                      "complexity_factor": 1.0
+                    },
+                    "total_downstream_cost": 4375000.0
+                  },
+                  "auxiliary": {
+                    "seed_fermenters": {
+                      "count": 4,
+                      "volume_l": 308.00000000000006,
+                      "unit_cost": 15561.36795649899,
+                      "total_cost": 62245.47182599596
+                    },
+                    "media_tanks": {
+                      "count": 5,
+                      "volume_l": 2970.0,
+                      "unit_cost": 45257.46656318223,
+                      "total_cost": 226287.33281591116
+                    },
+                    "cone_mill": {
+                      "count": 1,
+                      "unit_cost": 50000,
+                      "total_cost": 50000
+                    },
+                    "v_blender": {
+                      "count": 1,
+                      "volume_l": 500,
+                      "unit_cost": 30000,
+                      "total_cost": 30000
+                    },
+                    "qc_lab": {
+                      "count": 1,
+                      "unit_cost": 250000,
+                      "total_cost": 250000
+                    },
+                    "total_auxiliary_cost": 618532.8046419071
+                  },
+                  "utilities": {
+                    "autoclave": 100000,
+                    "purified_water": 150000,
+                    "wfi_system": 400000,
+                    "clean_steam": 120000,
+                    "cip_system": 250000,
+                    "total_utilities": 1020000
+                  }
+                }
+              },
+              "equipment_cost": 6944454.814271314,
+              "installation_cost": 1250001.8665688364,
+              "utilities_cost": 1020000.0,
+              "total_installed_cost": 8194456.68084015
+            },
+            "economics": {
+              "annual_revenue": 101517148.656,
+              "raw_materials_cost": 654383.534,
+              "utilities_cost": 92057.06065818183,
+              "labor_cost": 1138200.0,
+              "maintenance_cost": 763890.0295698446,
+              "ga_other_cost": 156250.0,
+              "total_opex": 2804780.6242280263,
+              "land_cost": 1007500.0,
+              "building_cost": 3720000.0,
+              "equipment_cost": 6944454.814271314,
+              "contingency": 1809073.935317621,
+              "working_capital": 934926.8747426753,
+              "total_capex": 15665957.490900446,
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "ebitda_margin": 0.9723713612787502,
+              "cash_flows": [
+                -10966170.24363031,
+                -4699787.247270133,
+                28611931.497210838,
+                42826512.493786,
+                53487448.241217375,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495
+              ],
+              "licensing_fixed": 0.0,
+              "licensing_royalty_rate": 0.0
+            },
+            "optimization": null,
+            "sensitivity": null,
+            "warnings": [
+              "Production ratio is out of sensible range: 16.41x. (Target: 0.5x-1.5x)"
+            ],
+            "errors": [],
+            "calculation_time_s": 0.0023856163024902344
+          },
+          "status": "completed",
+          "message": "Scenario completed successfully"
+        }
+      }
+    },
+    {
+      "test_name": "Sensitivity Analysis",
+      "success": true,
+      "success_rate": 1.0,
+      "passed_tests": 8,
+      "total_tests": 8,
+      "validations": {
+        "target_tpa": {
+          "expected": 12.5,
+          "actual": 12.5,
+          "passed": true,
+          "test": "Target TPA should match form input"
+        },
+        "strain_name": {
+          "expected": "Test Lactobacillus",
+          "actual": "Test Lactobacillus",
+          "passed": true,
+          "test": "Strain name should match form input"
+        },
+        "fermentation_time": {
+          "expected": 22.0,
+          "actual": 22.0,
+          "passed": true,
+          "test": "Fermentation time should match form input"
+        },
+        "npv_positive": {
+          "test": "NPV should be positive (basic sanity check)",
+          "passed": true,
+          "value": 248108802.47610953
+        },
+        "irr_reasonable": {
+          "test": "IRR should be reasonable (0.1 to 5.0)",
+          "passed": true,
+          "value": 1.2691802185918672
+        },
+        "payback_reasonable": {
+          "test": "Payback should be reasonable (1-10 years)",
+          "passed": true,
+          "value": 1.547532329036493
+        },
+        "sensitivity_completed": {
+          "test": "Sensitivity analysis should complete successfully",
+          "passed": true,
+          "value": true
+        },
+        "sensitivity_parameters": {
+          "test": "Sensitivity analysis should analyze specified parameters",
+          "passed": true,
+          "value": [
+            "tornado_data",
+            "grid_results",
+            "correlation_matrix",
+            "most_sensitive_parameters"
+          ]
+        }
+      },
+      "metrics": {
+        "npv": 248108802.47610953,
+        "irr": 1.2691802185918672,
+        "payback_years": 1.547532329036493,
+        "capex": 15665957.490900446,
+        "opex": 2804780.6242280263,
+        "target_tpa": 12.5,
+        "actual_tpa": 205.08514879999998,
+        "annual_revenue": 101517148.656,
+        "labor_cost": 1138200.0,
+        "utilities_cost": 92057.06065818183,
+        "maintenance_cost": 763890.0295698446,
+        "land_cost": 1007500.0,
+        "building_cost": 3720000.0,
+        "equipment_cost": 6944454.814271314,
+        "total_capex": 15665957.490900446,
+        "strain_name": "Test Lactobacillus",
+        "fermentation_time": 22.0,
+        "batch_mass_kg": 171.38,
+        "annual_kg_good": 205085.1488,
+        "optimization_completed": false,
+        "sensitivity_completed": true,
+        "sensitivity_parameters": [
+          "tornado_data",
+          "grid_results",
+          "correlation_matrix",
+          "most_sensitive_parameters"
+        ],
+        "sensitivity_results_count": 1
+      },
+      "form_data": {
+        "name": "Sensitivity Analysis Scenario",
+        "description": "Testing frontend form data collection - Sensitivity Analysis Scenario",
+        "target_tpa": 12.5,
+        "strains": [
+          {
+            "name": "Test Lactobacillus",
+            "fermentation_time_h": 22.0,
+            "turnaround_time_h": 11.0,
+            "downstream_time_h": 6.0,
+            "yield_g_per_L": 95.0,
+            "media_cost_usd": 275.0,
+            "cryo_cost_usd": 210.0,
+            "utility_rate_ferm_kw": 380.0,
+            "utility_rate_cent_kw": 18.0,
+            "utility_rate_lyo_kw": 2.2,
+            "utility_cost_steam": 0.027,
+            "cv_ferm": 0.12,
+            "cv_turn": 0.12,
+            "cv_down": 0.12,
+            "respiration_type": "aerobic",
+            "requires_tff": true,
+            "downstream_complexity": 1.2
+          }
+        ],
+        "equipment": {
+          "reactors_total": 5,
+          "ds_lines_total": 3,
+          "reactor_allocation_policy": "inverse_ct",
+          "ds_allocation_policy": "inverse_ct",
+          "shared_downstream": true
+        },
+        "volumes": {
+          "base_fermenter_vol_l": 2200.0,
+          "volume_options_l": [
+            2200.0,
+            2800.0,
+            3200.0
+          ],
+          "working_volume_fraction": 0.82,
+          "seed_fermenter_ratio": 0.14,
+          "media_tank_ratio": 1.35
+        },
+        "economics": {
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5
+        },
+        "labor": {
+          "plant_manager_salary": 125000,
+          "fermentation_specialist_salary": 48000,
+          "downstream_process_operator_salary": 62000,
+          "general_technician_salary": 41000,
+          "qaqc_lab_tech_salary": 47000,
+          "maintenance_tech_salary": 47000,
+          "utility_operator_salary": 47000,
+          "logistics_clerk_salary": 47000,
+          "office_clerk_salary": 41000,
+          "min_fte": 18,
+          "fte_per_tpa": 1.2
+        },
+        "opex": {
+          "electricity_usd_per_kwh": 0.125,
+          "steam_usd_per_kg": 0.028,
+          "water_usd_per_m3": 0.0025,
+          "natural_gas_usd_per_mmbtu": 4.2,
+          "raw_materials_markup": 1.15,
+          "utilities_efficiency": 0.88
+        },
+        "capex": {
+          "land_cost_per_m2": 650,
+          "building_cost_per_m2": 2400,
+          "fermenter_base_cost": 175000,
+          "fermenter_scale_exponent": 0.65,
+          "centrifuge_cost": 240000,
+          "tff_skid_cost": 175000,
+          "lyophilizer_cost_per_m2": 58000,
+          "utilities_cost_factor": 0.28,
+          "installation_factor": 0.18,
+          "contingency_factor": 0.14,
+          "working_capital_months": 4,
+          "parity_mode": false
+        },
+        "prices": {
+          "product_prices": {
+            "yogurt": 475,
+            "lacto_bifido": 475,
+            "bacillus": 475,
+            "sacco": 575,
+            "default": 475
+          },
+          "raw_prices": {
+            "glucose": 0.88,
+            "yeast_extract": 6.8,
+            "peptone": 8.8,
+            "corn_steep_liquor": 0.68,
+            "sodium_chloride": 0.25,
+            "magnesium_sulfate": 1.2,
+            "potassium_phosphate": 2.1
+          }
+        },
+        "optimize_equipment": false,
+        "use_multiobjective": false,
+        "optimization": {
+          "enabled": false,
+          "simulation_type": "deterministic",
+          "objectives": [],
+          "min_tpa": 8.0,
+          "max_capex_usd": 15000000,
+          "min_utilization": 0.75,
+          "max_payback": 3.5,
+          "max_evaluations": 50,
+          "population_size": 20,
+          "n_generations": 10,
+          "n_monte_carlo_samples": 100,
+          "confidence_level": 0.96
+        },
+        "sensitivity": {
+          "enabled": true,
+          "parameters": [
+            "discount_rate",
+            "electricity_usd_per_kwh",
+            "plant_manager_salary"
+          ],
+          "delta_percentage": 0.12,
+          "grid_points": 3,
+          "n_samples": 100
+        },
+        "assumptions": {
+          "hours_per_year": 8760.0,
+          "upstream_availability": 0.92,
+          "downstream_availability": 0.9,
+          "quality_yield": 0.98,
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18
+        }
+      },
+      "api_result": {
+        "success": true,
+        "data": {
+          "job_id": null,
+          "result": {
+            "scenario_name": "Sensitivity Analysis Scenario",
+            "timestamp": "2025-08-21T23:44:04.409489",
+            "kpis": {
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "tpa": 205.08514879999998,
+              "target_tpa": 12.5,
+              "capex": 15665957.490900446,
+              "opex": 2804780.6242280263,
+              "opex_per_kg": 13.676176167018616,
+              "ebitda_margin": 0.9723713612787502,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.3097643097643098,
+              "meets_tpa": 1.0,
+              "production_kg": 205085.1488
+            },
+            "capacity": {
+              "per_strain": [
+                {
+                  "name": "Test Lactobacillus",
+                  "fermentation_time_h": 22.0,
+                  "turnaround_time_h": 11.0,
+                  "downstream_time_h": 6.0,
+                  "batch_mass_kg": 171.38,
+                  "cv_ferm": 0.12,
+                  "cv_turn": 0.12,
+                  "cv_down": 0.12,
+                  "utility_rate_ferm_kw": 380.0,
+                  "utility_rate_cent_kw": 18.0,
+                  "utility_rate_lyo_kw": 2.2,
+                  "utility_cost_steam": 0.027,
+                  "ct_up_h": 33.0,
+                  "ct_ds_h": 6.0,
+                  "reactors_assigned": 5.0,
+                  "ds_lines_assigned": 3.0,
+                  "up_capacity_batches": 1221.0909090909092,
+                  "ds_capacity_batches": 3942.0,
+                  "feasible_batches": 1221.0909090909092,
+                  "good_batches": 1196.669090909091,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3097643097643098,
+                  "annual_kg_good": 205085.1488
+                }
+              ],
+              "total_feasible_batches": 1221.0909090909092,
+              "total_good_batches": 1196.669090909091,
+              "total_annual_kg": 205085.1488,
+              "weighted_up_utilization": 1.0,
+              "weighted_ds_utilization": 0.3097643097643098,
+              "bottleneck": "upstream",
+              "kg_p10": null,
+              "kg_p50": null,
+              "kg_p90": null
+            },
+            "equipment": {
+              "counts": {
+                "fermenters": 5,
+                "2200.0L_fermenters": 5,
+                "seed_fermenters": 4,
+                "media_tanks": 5,
+                "centrifuges": 3,
+                "tff_skids": 1,
+                "lyophilizers": 3,
+                "cone_mills": 1,
+                "v_blenders": 1,
+                "qc_labs": 1
+              },
+              "specifications": {
+                "fermenter_volume_l": 2200.0,
+                "seed_fermenter_volume_l": 308.00000000000006,
+                "media_tank_volume_l": 2970.0,
+                "lyophilizer_size_m2": 20,
+                "v_blender_volume_l": 500,
+                "strain_processing_requirements": [
+                  {
+                    "name": "Test Lactobacillus",
+                    "respiration_type": "aerobic",
+                    "requires_tff": false,
+                    "downstream_complexity": 1.0
+                  }
+                ],
+                "cost_breakdown": {
+                  "fermenters": {
+                    "unit_cost": 186184.4019258814,
+                    "total_cost": 930922.009629407,
+                    "count": 5,
+                    "volume_l": 2200.0
+                  },
+                  "downstream": {
+                    "centrifuges": {
+                      "count": 3,
+                      "unit_cost": 240000.0,
+                      "total_cost": 720000.0
+                    },
+                    "tff_skids": {
+                      "count": 1,
+                      "unit_cost": 175000.0,
+                      "total_cost": 175000.0
+                    },
+                    "lyophilizers": {
+                      "count": 3,
+                      "unit_cost": 1160000.0,
+                      "total_cost": 3480000.0,
+                      "size_m2": 20,
+                      "complexity_factor": 1.0
+                    },
+                    "total_downstream_cost": 4375000.0
+                  },
+                  "auxiliary": {
+                    "seed_fermenters": {
+                      "count": 4,
+                      "volume_l": 308.00000000000006,
+                      "unit_cost": 15561.36795649899,
+                      "total_cost": 62245.47182599596
+                    },
+                    "media_tanks": {
+                      "count": 5,
+                      "volume_l": 2970.0,
+                      "unit_cost": 45257.46656318223,
+                      "total_cost": 226287.33281591116
+                    },
+                    "cone_mill": {
+                      "count": 1,
+                      "unit_cost": 50000,
+                      "total_cost": 50000
+                    },
+                    "v_blender": {
+                      "count": 1,
+                      "volume_l": 500,
+                      "unit_cost": 30000,
+                      "total_cost": 30000
+                    },
+                    "qc_lab": {
+                      "count": 1,
+                      "unit_cost": 250000,
+                      "total_cost": 250000
+                    },
+                    "total_auxiliary_cost": 618532.8046419071
+                  },
+                  "utilities": {
+                    "autoclave": 100000,
+                    "purified_water": 150000,
+                    "wfi_system": 400000,
+                    "clean_steam": 120000,
+                    "cip_system": 250000,
+                    "total_utilities": 1020000
+                  }
+                }
+              },
+              "equipment_cost": 6944454.814271314,
+              "installation_cost": 1250001.8665688364,
+              "utilities_cost": 1020000.0,
+              "total_installed_cost": 8194456.68084015
+            },
+            "economics": {
+              "annual_revenue": 101517148.656,
+              "raw_materials_cost": 654383.534,
+              "utilities_cost": 92057.06065818183,
+              "labor_cost": 1138200.0,
+              "maintenance_cost": 763890.0295698446,
+              "ga_other_cost": 156250.0,
+              "total_opex": 2804780.6242280263,
+              "land_cost": 1007500.0,
+              "building_cost": 3720000.0,
+              "equipment_cost": 6944454.814271314,
+              "contingency": 1809073.935317621,
+              "working_capital": 934926.8747426753,
+              "total_capex": 15665957.490900446,
+              "npv": 248108802.47610953,
+              "irr": 1.2691802185918672,
+              "payback_years": 1.547532329036493,
+              "ebitda_margin": 0.9723713612787502,
+              "cash_flows": [
+                -10966170.24363031,
+                -4699787.247270133,
+                28611931.497210838,
+                42826512.493786,
+                53487448.241217375,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495,
+                60594738.73950495
+              ],
+              "licensing_fixed": 0.0,
+              "licensing_royalty_rate": 0.0
+            },
+            "optimization": null,
+            "sensitivity": {
+              "tornado_data": {
+                "discount_rate": {
+                  "down_npv": 274768239.95733476,
+                  "up_npv": 228551039.3692208,
+                  "down_irr": 1.352468794331644,
+                  "up_irr": 1.352468794331644
+                },
+                "electricity_usd_per_kwh": {
+                  "down_npv": 250273604.11194918,
+                  "up_npv": 250273604.11194918,
+                  "down_irr": 1.352468794331644,
+                  "up_irr": 1.352468794331644
+                },
+                "plant_manager_salary": {
+                  "down_npv": 250273604.11194918,
+                  "up_npv": 250273604.11194918,
+                  "down_irr": 1.352468794331644,
+                  "up_irr": 1.352468794331644
+                }
+              },
+              "grid_results": null,
+              "correlation_matrix": null,
+              "most_sensitive_parameters": [
+                "discount_rate",
+                "electricity_usd_per_kwh",
+                "plant_manager_salary"
+              ]
+            },
+            "warnings": [
+              "Production ratio is out of sensible range: 16.41x. (Target: 0.5x-1.5x)"
+            ],
+            "errors": [],
+            "calculation_time_s": 0.02294135093688965
+          },
+          "status": "completed",
+          "message": "Scenario completed successfully"
+        }
+      }
+    },
+    {
+      "test_name": "Combined Optimization + Sensitivity",
+      "success": true,
+      "success_rate": 0.9,
+      "passed_tests": 9,
+      "total_tests": 10,
+      "validations": {
+        "target_tpa": {
+          "expected": 12.5,
+          "actual": 12.5,
+          "passed": true,
+          "test": "Target TPA should match form input"
+        },
+        "strain_name": {
+          "expected": "Test Lactobacillus",
+          "actual": "Test Lactobacillus",
+          "passed": true,
+          "test": "Strain name should match form input"
+        },
+        "fermentation_time": {
+          "expected": 22.0,
+          "actual": 22.0,
+          "passed": true,
+          "test": "Fermentation time should match form input"
+        },
+        "npv_positive": {
+          "test": "NPV should be positive (basic sanity check)",
+          "passed": true,
+          "value": 93021813.57911158
+        },
+        "irr_reasonable": {
+          "test": "IRR should be reasonable (0.1 to 5.0)",
+          "passed": true,
+          "value": 0.903842558241053
+        },
+        "payback_reasonable": {
+          "test": "Payback should be reasonable (1-10 years)",
+          "passed": true,
+          "value": 1.9460630267540453
+        },
+        "optimization_completed": {
+          "test": "Optimization should complete successfully",
+          "passed": true,
+          "value": true
+        },
+        "optimization_evaluations": {
+          "test": "Optimization should perform multiple evaluations",
+          "passed": false,
+          "value": 1
+        },
+        "sensitivity_completed": {
+          "test": "Sensitivity analysis should complete successfully",
+          "passed": true,
+          "value": true
+        },
+        "sensitivity_parameters": {
+          "test": "Sensitivity analysis should analyze specified parameters",
+          "passed": true,
+          "value": [
+            "tornado_data",
+            "grid_results",
+            "correlation_matrix",
+            "most_sensitive_parameters"
+          ]
+        }
+      },
+      "metrics": {
+        "npv": 93021813.57911158,
+        "irr": 0.903842558241053,
+        "payback_years": 1.9460630267540453,
+        "capex": 10644969.82396024,
+        "opex": 1969116.9498812964,
+        "target_tpa": 12.5,
+        "actual_tpa": 82.03405952000001,
+        "annual_revenue": 40606859.462400004,
+        "labor_cost": 1138200.0,
+        "utilities_cost": 36822.824263272734,
+        "maintenance_cost": 376090.71201802377,
+        "land_cost": 1007500.0,
+        "building_cost": 3720000.0,
+        "equipment_cost": 3419006.4728911254,
+        "total_capex": 10644969.82396024,
+        "strain_name": "Test Lactobacillus",
+        "fermentation_time": 22.0,
+        "batch_mass_kg": 171.38,
+        "annual_kg_good": 82034.05952000001,
+        "optimization_completed": true,
+        "best_solution_npv": 95865876.18119116,
+        "best_solution_irr": 1.0991092887105727,
+        "optimization_evaluations": 1,
+        "pareto_front_size": 1,
+        "sensitivity_completed": true,
+        "sensitivity_parameters": [
+          "tornado_data",
+          "grid_results",
+          "correlation_matrix",
+          "most_sensitive_parameters"
+        ],
+        "sensitivity_results_count": 1
+      },
+      "form_data": {
+        "name": "Combined Optimization + Sensitivity Scenario",
+        "description": "Testing frontend form data collection - Combined Optimization + Sensitivity Scenario",
+        "target_tpa": 12.5,
+        "strains": [
+          {
+            "name": "Test Lactobacillus",
+            "fermentation_time_h": 22.0,
+            "turnaround_time_h": 11.0,
+            "downstream_time_h": 6.0,
+            "yield_g_per_L": 95.0,
+            "media_cost_usd": 275.0,
+            "cryo_cost_usd": 210.0,
+            "utility_rate_ferm_kw": 380.0,
+            "utility_rate_cent_kw": 18.0,
+            "utility_rate_lyo_kw": 2.2,
+            "utility_cost_steam": 0.027,
+            "cv_ferm": 0.12,
+            "cv_turn": 0.12,
+            "cv_down": 0.12,
+            "respiration_type": "aerobic",
+            "requires_tff": true,
+            "downstream_complexity": 1.2
+          }
+        ],
+        "equipment": {
+          "reactors_total": 5,
+          "ds_lines_total": 3,
+          "reactor_allocation_policy": "inverse_ct",
+          "ds_allocation_policy": "inverse_ct",
+          "shared_downstream": true
+        },
+        "volumes": {
+          "base_fermenter_vol_l": 2200.0,
+          "volume_options_l": [
+            2200.0,
+            2800.0,
+            3200.0
+          ],
+          "working_volume_fraction": 0.82,
+          "seed_fermenter_ratio": 0.14,
+          "media_tank_ratio": 1.35
+        },
+        "economics": {
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5
+        },
+        "labor": {
+          "plant_manager_salary": 125000,
+          "fermentation_specialist_salary": 48000,
+          "downstream_process_operator_salary": 62000,
+          "general_technician_salary": 41000,
+          "qaqc_lab_tech_salary": 47000,
+          "maintenance_tech_salary": 47000,
+          "utility_operator_salary": 47000,
+          "logistics_clerk_salary": 47000,
+          "office_clerk_salary": 41000,
+          "min_fte": 18,
+          "fte_per_tpa": 1.2
+        },
+        "opex": {
+          "electricity_usd_per_kwh": 0.125,
+          "steam_usd_per_kg": 0.028,
+          "water_usd_per_m3": 0.0025,
+          "natural_gas_usd_per_mmbtu": 4.2,
+          "raw_materials_markup": 1.15,
+          "utilities_efficiency": 0.88
+        },
+        "capex": {
+          "land_cost_per_m2": 650,
+          "building_cost_per_m2": 2400,
+          "fermenter_base_cost": 175000,
+          "fermenter_scale_exponent": 0.65,
+          "centrifuge_cost": 240000,
+          "tff_skid_cost": 175000,
+          "lyophilizer_cost_per_m2": 58000,
+          "utilities_cost_factor": 0.28,
+          "installation_factor": 0.18,
+          "contingency_factor": 0.14,
+          "working_capital_months": 4,
+          "parity_mode": false
+        },
+        "prices": {
+          "product_prices": {
+            "yogurt": 475,
+            "lacto_bifido": 475,
+            "bacillus": 475,
+            "sacco": 575,
+            "default": 475
+          },
+          "raw_prices": {
+            "glucose": 0.88,
+            "yeast_extract": 6.8,
+            "peptone": 8.8,
+            "corn_steep_liquor": 0.68,
+            "sodium_chloride": 0.25,
+            "magnesium_sulfate": 1.2,
+            "potassium_phosphate": 2.1
+          }
+        },
+        "optimize_equipment": true,
+        "use_multiobjective": true,
+        "optimization": {
+          "enabled": true,
+          "simulation_type": "deterministic",
+          "objectives": [
+            "npv",
+            "irr"
+          ],
+          "min_tpa": 8.0,
+          "max_capex_usd": 15000000,
+          "min_utilization": 0.75,
+          "max_payback": 3.5,
+          "max_evaluations": 50,
+          "population_size": 20,
+          "n_generations": 10,
+          "n_monte_carlo_samples": 100,
+          "confidence_level": 0.96
+        },
+        "sensitivity": {
+          "enabled": true,
+          "parameters": [
+            "discount_rate",
+            "electricity_usd_per_kwh",
+            "plant_manager_salary"
+          ],
+          "delta_percentage": 0.12,
+          "grid_points": 3,
+          "n_samples": 100
+        },
+        "assumptions": {
+          "hours_per_year": 8760.0,
+          "upstream_availability": 0.92,
+          "downstream_availability": 0.9,
+          "quality_yield": 0.98,
+          "discount_rate": 0.13,
+          "tax_rate": 0.28,
+          "variable_opex_share": 0.88,
+          "maintenance_pct_of_equip": 0.11,
+          "ga_other_scale_factor": 12.5,
+          "depreciation_years": 12,
+          "project_lifetime_years": 18
+        }
+      },
+      "api_result": {
+        "success": true,
+        "data": {
+          "job_id": null,
+          "result": {
+            "scenario_name": "Combined Optimization + Sensitivity Scenario",
+            "timestamp": "2025-08-21T23:44:10.986510",
+            "kpis": {
+              "npv": 93021813.57911158,
+              "irr": 0.903842558241053,
+              "payback_years": 1.9460630267540453,
+              "tpa": 82.03405952000001,
+              "target_tpa": 12.5,
+              "capex": 10644969.82396024,
+              "opex": 1969116.9498812964,
+              "opex_per_kg": 24.003651183460246,
+              "ebitda_margin": 0.9515077753869491,
+              "up_utilization": 1.0,
+              "ds_utilization": 0.3717171717171718,
+              "meets_tpa": 1.0,
+              "production_kg": 82034.05952000001
+            },
+            "capacity": {
+              "per_strain": [
+                {
+                  "name": "Test Lactobacillus",
+                  "fermentation_time_h": 22.0,
+                  "turnaround_time_h": 11.0,
+                  "downstream_time_h": 6.0,
+                  "batch_mass_kg": 171.38,
+                  "cv_ferm": 0.12,
+                  "cv_turn": 0.12,
+                  "cv_down": 0.12,
+                  "utility_rate_ferm_kw": 380.0,
+                  "utility_rate_cent_kw": 18.0,
+                  "utility_rate_lyo_kw": 2.2,
+                  "utility_cost_steam": 0.027,
+                  "ct_up_h": 33.0,
+                  "ct_ds_h": 6.0,
+                  "reactors_assigned": 2.0,
+                  "ds_lines_assigned": 1.0,
+                  "up_capacity_batches": 488.4363636363637,
+                  "ds_capacity_batches": 1314.0,
+                  "feasible_batches": 488.4363636363637,
+                  "good_batches": 478.6676363636364,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3717171717171718,
+                  "annual_kg_good": 82034.05952000001
+                }
+              ],
+              "total_feasible_batches": 488.4363636363637,
+              "total_good_batches": 478.6676363636364,
+              "total_annual_kg": 82034.05952000001,
+              "weighted_up_utilization": 1.0,
+              "weighted_ds_utilization": 0.3717171717171718,
+              "bottleneck": "upstream",
+              "kg_p10": null,
+              "kg_p50": null,
+              "kg_p90": null
+            },
+            "equipment": {
+              "counts": {
+                "fermenters": 2,
+                "2200.0L_fermenters": 2,
+                "seed_fermenters": 2,
+                "media_tanks": 2,
+                "centrifuges": 1,
+                "tff_skids": 1,
+                "lyophilizers": 1,
+                "cone_mills": 1,
+                "v_blenders": 1,
+                "qc_labs": 1
+              },
+              "specifications": {
+                "fermenter_volume_l": 2200.0,
+                "seed_fermenter_volume_l": 308.00000000000006,
+                "media_tank_volume_l": 2970.0,
+                "lyophilizer_size_m2": 20,
+                "v_blender_volume_l": 500,
+                "strain_processing_requirements": [
+                  {
+                    "name": "Test Lactobacillus",
+                    "respiration_type": "aerobic",
+                    "requires_tff": false,
+                    "downstream_complexity": 1.0
+                  }
+                ],
+                "cost_breakdown": {
+                  "fermenters": {
+                    "unit_cost": 186184.4019258814,
+                    "total_cost": 372368.8038517628,
+                    "count": 2,
+                    "volume_l": 2200.0
+                  },
+                  "downstream": {
+                    "centrifuges": {
+                      "count": 1,
+                      "unit_cost": 240000.0,
+                      "total_cost": 240000.0
+                    },
+                    "tff_skids": {
+                      "count": 1,
+                      "unit_cost": 175000.0,
+                      "total_cost": 175000.0
+                    },
+                    "lyophilizers": {
+                      "count": 1,
+                      "unit_cost": 1160000.0,
+                      "total_cost": 1160000.0,
+                      "size_m2": 20,
+                      "complexity_factor": 1.0
+                    },
+                    "total_downstream_cost": 1575000.0
+                  },
+                  "auxiliary": {
+                    "seed_fermenters": {
+                      "count": 2,
+                      "volume_l": 308.00000000000006,
+                      "unit_cost": 15561.36795649899,
+                      "total_cost": 31122.73591299798
+                    },
+                    "media_tanks": {
+                      "count": 2,
+                      "volume_l": 2970.0,
+                      "unit_cost": 45257.46656318223,
+                      "total_cost": 90514.93312636446
+                    },
+                    "cone_mill": {
+                      "count": 1,
+                      "unit_cost": 50000,
+                      "total_cost": 50000
+                    },
+                    "v_blender": {
+                      "count": 1,
+                      "volume_l": 500,
+                      "unit_cost": 30000,
+                      "total_cost": 30000
+                    },
+                    "qc_lab": {
+                      "count": 1,
+                      "unit_cost": 250000,
+                      "total_cost": 250000
+                    },
+                    "total_auxiliary_cost": 451637.66903936246
+                  },
+                  "utilities": {
+                    "autoclave": 100000,
+                    "purified_water": 150000,
+                    "wfi_system": 400000,
+                    "clean_steam": 120000,
+                    "cip_system": 250000,
+                    "total_utilities": 1020000
+                  }
+                }
+              },
+              "equipment_cost": 3419006.4728911254,
+              "installation_cost": 615421.1651204026,
+              "utilities_cost": 1020000.0,
+              "total_installed_cost": 4034427.638011528
+            },
+            "economics": {
+              "annual_revenue": 40606859.462400004,
+              "raw_materials_cost": 261753.4136,
+              "utilities_cost": 36822.824263272734,
+              "labor_cost": 1138200.0,
+              "maintenance_cost": 376090.71201802377,
+              "ga_other_cost": 156250.0,
+              "total_opex": 1969116.9498812964,
+              "land_cost": 1007500.0,
+              "building_cost": 3720000.0,
+              "equipment_cost": 3419006.4728911254,
+              "contingency": 1226669.869321614,
+              "working_capital": 656372.3166270987,
+              "total_capex": 10644969.82396024,
+              "npv": 93021813.57911158,
+              "irr": 0.903842558241053,
+              "payback_years": 1.9460630267540453,
+              "ebitda_margin": 0.9515077753869491,
+              "cash_flows": [
+                -7451478.876772168,
+                -3193490.9471880724,
+                11251861.158218257,
+                16815696.08002095,
+                20988572.27137297,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316,
+                23770489.732274316
+              ],
+              "licensing_fixed": 0.0,
+              "licensing_royalty_rate": 0.0
+            },
+            "optimization": {
+              "best_solution": {
+                "reactors": 2,
+                "ds_lines": 1,
+                "fermenter_volume_l": 2200.0,
+                "meets_capacity": true,
+                "npv": 95865876.18119116,
+                "irr": 1.0991092887105727,
+                "capex": 7788861.286482907,
+                "opex_per_kg": 22.837456803763647,
+                "capacity_kg": 82034.05952000001,
+                "excess_ratio": 5.562724761600001,
+                "utilization": 0.685858585858586,
+                "payback_years": 1.692583802742515,
+                "ebitda_margin": 0.9538637236287604,
+                "up_utilization": 1.0,
+                "ds_utilization": 0.3717171717171718,
+                "bottleneck": "upstream",
+                "economics": {
+                  "annual_revenue": 40606859.462400004,
+                  "raw_materials_cost": 261753.4136,
+                  "utilities_cost": 36822.824263272734,
+                  "labor_cost": 1138200.0,
+                  "maintenance_cost": 280423.0528621035,
+                  "ga_other_cost": 156250.0,
+                  "total_opex": 1873449.2907253762,
+                  "land_cost": 514713.21323044616,
+                  "building_cost": 3426558.5587653536,
+                  "equipment_cost": 2549300.4805645775,
+                  "contingency": 794781.7639268272,
+                  "working_capital": 635825.4111414618,
+                  "total_capex": 7788861.286482907,
+                  "npv": 95865876.18119116,
+                  "irr": 1.0991092887105727,
+                  "payback_years": 1.692583802742515,
+                  "ebitda_margin": 0.9538637236287604,
+                  "cash_flows": [
+                    -5452202.900538035,
+                    -2336658.385944872,
+                    11246092.177784594,
+                    16823703.242505737,
+                    21006911.5410466,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166,
+                    23795717.073407166
+                  ],
+                  "licensing_fixed": 0.0,
+                  "licensing_royalty_rate": 0.0
+                },
+                "capacity": {
+                  "per_strain": [
+                    {
+                      "name": "Test Lactobacillus",
+                      "fermentation_time_h": 22.0,
+                      "turnaround_time_h": 11.0,
+                      "downstream_time_h": 6.0,
+                      "batch_mass_kg": 171.38,
+                      "cv_ferm": 0.12,
+                      "cv_turn": 0.12,
+                      "cv_down": 0.12,
+                      "utility_rate_ferm_kw": 380.0,
+                      "utility_rate_cent_kw": 18.0,
+                      "utility_rate_lyo_kw": 2.2,
+                      "utility_cost_steam": 0.027,
+                      "ct_up_h": 33.0,
+                      "ct_ds_h": 6.0,
+                      "reactors_assigned": 2.0,
+                      "ds_lines_assigned": 1.0,
+                      "up_capacity_batches": 488.4363636363637,
+                      "ds_capacity_batches": 1314.0,
+                      "feasible_batches": 488.4363636363637,
+                      "good_batches": 478.6676363636364,
+                      "up_utilization": 1.0,
+                      "ds_utilization": 0.3717171717171718,
+                      "annual_kg_good": 82034.05952000001
+                    }
+                  ],
+                  "total_feasible_batches": 488.4363636363637,
+                  "total_good_batches": 478.6676363636364,
+                  "total_annual_kg": 82034.05952000001,
+                  "weighted_up_utilization": 1.0,
+                  "weighted_ds_utilization": 0.3717171717171718,
+                  "bottleneck": "upstream",
+                  "kg_p10": null,
+                  "kg_p50": null,
+                  "kg_p90": null
+                },
+                "capex_breakdown": {
+                  "equip": 2549300.4805645775,
+                  "building": 3426558.5587653536,
+                  "land": 514713.21323044616,
+                  "install": 382395.0720846866,
+                  "direct": 6358254.111414618,
+                  "cont": 794781.7639268272,
+                  "wc": 635825.4111414618,
+                  "lyos_needed": 2,
+                  "licensing_fixed_total": 0.0,
+                  "total": 7788861.286482907
+                },
+                "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 556.3%"
+              },
+              "pareto_front": [
+                {
+                  "reactors": 2,
+                  "ds_lines": 1,
+                  "fermenter_volume_l": 2200.0,
+                  "meets_capacity": true,
+                  "npv": 95865876.18119116,
+                  "irr": 1.0991092887105727,
+                  "capex": 7788861.286482907,
+                  "opex_per_kg": 22.837456803763647,
+                  "capacity_kg": 82034.05952000001,
+                  "excess_ratio": 5.562724761600001,
+                  "utilization": 0.685858585858586,
+                  "payback_years": 1.692583802742515,
+                  "ebitda_margin": 0.9538637236287604,
+                  "up_utilization": 1.0,
+                  "ds_utilization": 0.3717171717171718,
+                  "bottleneck": "upstream",
+                  "economics": {
+                    "annual_revenue": 40606859.462400004,
+                    "raw_materials_cost": 261753.4136,
+                    "utilities_cost": 36822.824263272734,
+                    "labor_cost": 1138200.0,
+                    "maintenance_cost": 280423.0528621035,
+                    "ga_other_cost": 156250.0,
+                    "total_opex": 1873449.2907253762,
+                    "land_cost": 514713.21323044616,
+                    "building_cost": 3426558.5587653536,
+                    "equipment_cost": 2549300.4805645775,
+                    "contingency": 794781.7639268272,
+                    "working_capital": 635825.4111414618,
+                    "total_capex": 7788861.286482907,
+                    "npv": 95865876.18119116,
+                    "irr": 1.0991092887105727,
+                    "payback_years": 1.692583802742515,
+                    "ebitda_margin": 0.9538637236287604,
+                    "cash_flows": [
+                      -5452202.900538035,
+                      -2336658.385944872,
+                      11246092.177784594,
+                      16823703.242505737,
+                      21006911.5410466,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166,
+                      23795717.073407166
+                    ],
+                    "licensing_fixed": 0.0,
+                    "licensing_royalty_rate": 0.0
+                  },
+                  "capacity": {
+                    "per_strain": [
+                      {
+                        "name": "Test Lactobacillus",
+                        "fermentation_time_h": 22.0,
+                        "turnaround_time_h": 11.0,
+                        "downstream_time_h": 6.0,
+                        "batch_mass_kg": 171.38,
+                        "cv_ferm": 0.12,
+                        "cv_turn": 0.12,
+                        "cv_down": 0.12,
+                        "utility_rate_ferm_kw": 380.0,
+                        "utility_rate_cent_kw": 18.0,
+                        "utility_rate_lyo_kw": 2.2,
+                        "utility_cost_steam": 0.027,
+                        "ct_up_h": 33.0,
+                        "ct_ds_h": 6.0,
+                        "reactors_assigned": 2.0,
+                        "ds_lines_assigned": 1.0,
+                        "up_capacity_batches": 488.4363636363637,
+                        "ds_capacity_batches": 1314.0,
+                        "feasible_batches": 488.4363636363637,
+                        "good_batches": 478.6676363636364,
+                        "up_utilization": 1.0,
+                        "ds_utilization": 0.3717171717171718,
+                        "annual_kg_good": 82034.05952000001
+                      }
+                    ],
+                    "total_feasible_batches": 488.4363636363637,
+                    "total_good_batches": 478.6676363636364,
+                    "total_annual_kg": 82034.05952000001,
+                    "weighted_up_utilization": 1.0,
+                    "weighted_ds_utilization": 0.3717171717171718,
+                    "bottleneck": "upstream",
+                    "kg_p10": null,
+                    "kg_p50": null,
+                    "kg_p90": null
+                  },
+                  "capex_breakdown": {
+                    "equip": 2549300.4805645775,
+                    "building": 3426558.5587653536,
+                    "land": 514713.21323044616,
+                    "install": 382395.0720846866,
+                    "direct": 6358254.111414618,
+                    "cont": 794781.7639268272,
+                    "wc": 635825.4111414618,
+                    "lyos_needed": 2,
+                    "licensing_fixed_total": 0.0,
+                    "total": 7788861.286482907
+                  },
+                  "warning": "Could not meet progressive excess limits up to 25%. Minimum achievable: 556.3%"
+                }
+              ],
+              "n_evaluations": 2124,
+              "convergence_history": null,
+              "selected_fermenter_volume": 2200.0,
+              "selected_reactors": 2,
+              "selected_ds_lines": 1
+            },
+            "sensitivity": {
+              "tornado_data": {
+                "discount_rate": {
+                  "down_npv": 105451805.37003048,
+                  "up_npv": 87365470.43007658,
+                  "down_irr": 1.0991092887105727,
+                  "up_irr": 1.0991092887105727
+                },
+                "electricity_usd_per_kwh": {
+                  "down_npv": 95865876.18119116,
+                  "up_npv": 95865876.18119116,
+                  "down_irr": 1.0991092887105727,
+                  "up_irr": 1.0991092887105727
+                },
+                "plant_manager_salary": {
+                  "down_npv": 95865876.18119116,
+                  "up_npv": 95865876.18119116,
+                  "down_irr": 1.0991092887105727,
+                  "up_irr": 1.0991092887105727
+                }
+              },
+              "grid_results": null,
+              "correlation_matrix": null,
+              "most_sensitive_parameters": [
+                "discount_rate",
+                "electricity_usd_per_kwh",
+                "plant_manager_salary"
+              ]
+            },
+            "warnings": [
+              "Production ratio is out of sensible range: 6.56x. (Target: 0.5x-1.5x)"
+            ],
+            "errors": [
+              "Optimizer best solution (6.56x) misses target by >5%."
+            ],
+            "calculation_time_s": 4.573696136474609
+          },
+          "status": "completed",
+          "message": "Scenario completed successfully"
+        }
+      }
+    }
+  ]
+}

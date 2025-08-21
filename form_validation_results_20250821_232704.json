@@ -1,0 +1,347 @@
+{
+  "timestamp": "2025-08-21T23:27:04.656871",
+  "summary": {
+    "total_tests": 5,
+    "successful_tests": 4,
+    "partial_tests": 0,
+    "failed_tests": 1,
+    "overall_success_rate": 0.8
+  },
+  "baseline_metrics": {
+    "kpi_npv": 198497803.36543286,
+    "kpi_irr": 1.2266580365248485,
+    "kpi_payback_years": 1.5805116453036654,
+    "kpi_capex": 11051950.0,
+    "kpi_opex": 1762850.3606271402,
+    "kpi_opex_per_kg": 11.362761496003914,
+    "econ_annual_revenue": 65159965.88714668,
+    "econ_labor_cost": 669500.0,
+    "econ_utilities_cost": 56300.77608290988,
+    "econ_maintenance_cost": 420836.4076553414,
+    "econ_total_opex": 1762850.3606271402,
+    "econ_land_cost": 750000.0,
+    "econ_building_cost": 5250000.0,
+    "econ_equipment_cost": 4675960.0850593485,
+    "econ_total_capex": 11051950.0
+  },
+  "test_results": [
+    {
+      "status": "completed",
+      "section": "economics",
+      "modifications": {
+        "discount_rate": 0.15,
+        "tax_rate": 0.35,
+        "project_lifetime_years": 20,
+        "depreciation_years": 15
+      },
+      "changes_detected": {
+        "kpi_npv": {
+          "baseline": 198497803.36543286,
+          "modified": 126011255.21159223,
+          "change": -72486548.15384063,
+          "pct_change": -36.517556831797016
+        },
+        "kpi_irr": {
+          "baseline": 1.2266580365248485,
+          "modified": 1.1242490384587747,
+          "change": -0.10240899806607384,
+          "pct_change": -8.348618361169425
+        },
+        "kpi_payback_years": {
+          "baseline": 1.5805116453036654,
+          "modified": 1.669447454155137,
+          "change": 0.08893580885147157,
+          "pct_change": 5.627026483211026
+        }
+      },
+      "validation_results": {
+        "kpi_npv": {
+          "expected": "decrease",
+          "actual": "decrease",
+          "passed": true,
+          "change_pct": -36.517556831797016
+        },
+        "kpi_irr": {
+          "expected": "decrease",
+          "actual": "decrease",
+          "passed": true,
+          "change_pct": -8.348618361169425
+        }
+      },
+      "score": "2/2",
+      "success_rate": 1.0
+    },
+    {
+      "status": "completed",
+      "section": "labor",
+      "modifications": {
+        "plant_manager_salary": 150000,
+        "fermentation_specialist_salary": 60000,
+        "general_technician_salary": 50000,
+        "min_fte": 25
+      },
+      "changes_detected": {
+        "kpi_npv": {
+          "baseline": 198497803.36543286,
+          "modified": 197999066.0553937,
+          "change": -498737.31003916264,
+          "pct_change": -0.25125583335599505
+        },
+        "kpi_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1906850.3606271402,
+          "change": 144000.0,
+          "pct_change": 8.168588963431445
+        },
+        "kpi_opex_per_kg": {
+          "baseline": 11.362761496003914,
+          "modified": 12.290938777507527,
+          "change": 0.9281772815036131,
+          "pct_change": 8.168588963431441
+        },
+        "econ_labor_cost": {
+          "baseline": 669500.0,
+          "modified": 813500.0,
+          "change": 144000.0,
+          "pct_change": 21.50858849887976
+        },
+        "econ_total_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1906850.3606271402,
+          "change": 144000.0,
+          "pct_change": 8.168588963431445
+        }
+      },
+      "validation_results": {
+        "econ_labor_cost": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 21.50858849887976
+        },
+        "econ_total_opex": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 8.168588963431445
+        },
+        "kpi_opex": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 8.168588963431445
+        }
+      },
+      "score": "3/3",
+      "success_rate": 1.0
+    },
+    {
+      "status": "completed",
+      "section": "opex",
+      "modifications": {
+        "electricity_usd_per_kwh": 0.2,
+        "steam_usd_per_kg": 0.04,
+        "natural_gas_usd_per_mmbtu": 6.0,
+        "raw_materials_markup": 1.5
+      },
+      "changes_detected": {
+        "kpi_npv": {
+          "baseline": 198497803.36543286,
+          "modified": 198338969.7927564,
+          "change": -158833.57267645,
+          "pct_change": -0.08001779867761998
+        },
+        "kpi_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1808710.2431845802,
+          "change": 45859.88255744008,
+          "pct_change": 2.6014620175206065
+        },
+        "kpi_opex_per_kg": {
+          "baseline": 11.362761496003914,
+          "modified": 11.658359420463912,
+          "change": 0.29559792445999733,
+          "pct_change": 2.6014620175206
+        },
+        "econ_utilities_cost": {
+          "baseline": 56300.77608290988,
+          "modified": 102160.6586403499,
+          "change": 45859.88255744002,
+          "pct_change": 81.45515168370974
+        },
+        "econ_total_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1808710.2431845802,
+          "change": 45859.88255744008,
+          "pct_change": 2.6014620175206065
+        }
+      },
+      "validation_results": {
+        "econ_utilities_cost": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 81.45515168370974
+        },
+        "econ_total_opex": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 2.6014620175206065
+        },
+        "kpi_opex_per_kg": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 2.6014620175206
+        }
+      },
+      "score": "3/3",
+      "success_rate": 1.0
+    },
+    {
+      "status": "completed",
+      "section": "capex",
+      "modifications": {
+        "land_cost_per_m2": 800,
+        "building_cost_per_m2": 3000,
+        "fermenter_base_cost": 200000,
+        "installation_factor": 0.25,
+        "contingency_factor": 0.2
+      },
+      "changes_detected": {
+        "kpi_npv": {
+          "baseline": 198497803.36543286,
+          "modified": 198417178.3142828,
+          "change": -80625.05115005374,
+          "pct_change": -0.040617603713036396
+        },
+        "kpi_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1786129.1631789205,
+          "change": 23278.80255178036,
+          "pct_change": 1.320520622266478
+        },
+        "kpi_opex_per_kg": {
+          "baseline": 11.362761496003914,
+          "modified": 11.5128091048176,
+          "change": 0.1500476088136864,
+          "pct_change": 1.3205206222664756
+        },
+        "econ_maintenance_cost": {
+          "baseline": 420836.4076553414,
+          "modified": 444115.21020712174,
+          "change": 23278.80255178036,
+          "pct_change": 5.531556236181292
+        },
+        "econ_total_opex": {
+          "baseline": 1762850.3606271402,
+          "modified": 1786129.1631789205,
+          "change": 23278.80255178036,
+          "pct_change": 1.320520622266478
+        },
+        "econ_equipment_cost": {
+          "baseline": 4675960.0850593485,
+          "modified": 4934613.446745797,
+          "change": 258653.36168644857,
+          "pct_change": 5.531556236181294
+        }
+      },
+      "validation_results": {
+        "econ_land_cost": {
+          "expected": "increase",
+          "actual": "no_change",
+          "passed": false,
+          "change_pct": 0
+        },
+        "econ_building_cost": {
+          "expected": "increase",
+          "actual": "no_change",
+          "passed": false,
+          "change_pct": 0
+        },
+        "econ_equipment_cost": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 5.531556236181294
+        },
+        "kpi_capex": {
+          "expected": "increase",
+          "actual": "no_change",
+          "passed": false,
+          "change_pct": 0
+        },
+        "econ_maintenance_cost": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 5.531556236181292
+        }
+      },
+      "score": "2/5",
+      "success_rate": 0.4
+    },
+    {
+      "status": "completed",
+      "section": "prices",
+      "modifications": {
+        "product_prices": {
+          "yogurt": 600,
+          "lacto_bifido": 600,
+          "bacillus": 600,
+          "sacco": 750,
+          "default": 600
+        }
+      },
+      "changes_detected": {
+        "kpi_npv": {
+          "baseline": 198497803.36543286,
+          "modified": 305788897.66299736,
+          "change": 107291094.2975645,
+          "pct_change": 54.051527260501956
+        },
+        "kpi_irr": {
+          "baseline": 1.2266580365248485,
+          "modified": 1.5718104565479356,
+          "change": 0.3451524200230871,
+          "pct_change": 28.137623505970105
+        },
+        "kpi_payback_years": {
+          "baseline": 1.5805116453036654,
+          "modified": 1.3835846208734488,
+          "change": -0.1969270244302166,
+          "pct_change": -12.459700946548914
+        },
+        "econ_annual_revenue": {
+          "baseline": 65159965.88714668,
+          "modified": 97739948.83072002,
+          "change": 32579982.94357334,
+          "pct_change": 50.0
+        }
+      },
+      "validation_results": {
+        "econ_annual_revenue": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 50.0
+        },
+        "kpi_npv": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 54.051527260501956
+        },
+        "kpi_irr": {
+          "expected": "increase",
+          "actual": "increase",
+          "passed": true,
+          "change_pct": 28.137623505970105
+        }
+      },
+      "score": "3/3",
+      "success_rate": 1.0
+    }
+  ]
+}

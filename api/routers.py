@@ -96,9 +96,9 @@ def transform_frontend_request(frontend_data: dict) -> dict:
             "target_tpa": frontend_data.get("target_tpa", 10.0),
             "strains": frontend_data.get("strains", []),
             "optimize_equipment": frontend_data.get("optimize_equipment", True),
-            "use_multiobjective": frontend_data.get("use_multiobjective", False)
+            "use_multiobjective": frontend_data.get("use_multiobjective", True)
         }
-        
+
         # Transform nested structures if they exist
         if "equipment" in frontend_data:
             equipment = frontend_data["equipment"].copy()
@@ -107,35 +107,44 @@ def transform_frontend_request(frontend_data: dict) -> dict:
             equipment.pop("downstream_availability", None)
             equipment.pop("quality_yield", None)
             transformed["equipment"] = equipment
-        
+
         if "volumes" in frontend_data:
             transformed["volumes"] = frontend_data["volumes"]
-            
+
         # Map economics to assumptions if present
         if "economics" in frontend_data:
             economics = frontend_data["economics"]
-            # Create a clean assumptions structure
+            # Create a clean assumptions structure with defaults
             assumptions = {
-                "discount_rate": economics.get("discount_rate", 0.10),
-                "tax_rate": economics.get("tax_rate", 0.25),
-                "depreciation_years": economics.get("depreciation_years", 10),
-                "project_lifetime_years": economics.get("plant_lifetime", 15),
+                "discount_rate": 0.10,
+                "tax_rate": 0.25,
+                "depreciation_years": 10,
+                "project_lifetime_years": 15,
+                "variable_opex_share": 0.85,
+                "maintenance_pct_of_equip": 0.09,
+                "ga_other_scale_factor": 10.84,
                 # Add required defaults
                 "hours_per_year": 8760.0,
                 "upstream_availability": 0.92,
                 "downstream_availability": 0.90,
                 "quality_yield": 0.98,
-                "variable_opex_share": 0.85,
-                "maintenance_pct_of_equip": 0.09,
-                "ga_other_scale_factor": 10.84
             }
+            # Override with frontend economics values
+            for key, value in economics.items():
+                if value is not None:
+                    if key == "plant_lifetime":
+                        assumptions["project_lifetime_years"] = value
+                    elif key in assumptions:
+                        assumptions[key] = value
+            # Store economics section as well for direct access
+            transformed["economics"] = economics
             transformed["assumptions"] = assumptions
         elif "assumptions" in frontend_data:
             # If assumptions is already provided, use it but ensure it's clean
             assumptions = frontend_data["assumptions"]
             if isinstance(assumptions, dict):
                 transformed["assumptions"] = assumptions
-            
+
         # Handle labor config - map frontend to expected structure
         if "labor" in frontend_data:
             labor = frontend_data["labor"]
@@ -153,13 +162,17 @@ def transform_frontend_request(frontend_data: dict) -> dict:
                 "fte_per_tpa": 1.0
             }
             # Override with frontend values if provided
+            for key, value in labor.items():
+                if key in transformed_labor and value is not None:
+                    transformed_labor[key] = value
+            # Handle average_salary override (for backwards compatibility)
             if "average_salary" in labor:
                 salary = labor["average_salary"]
                 for key in transformed_labor:
                     if "salary" in key:
                         transformed_labor[key] = salary
             transformed["labor"] = transformed_labor
-            
+
         # Handle opex config
         if "opex" in frontend_data:
             opex = frontend_data["opex"]
@@ -171,11 +184,17 @@ def transform_frontend_request(frontend_data: dict) -> dict:
                 "raw_materials_markup": 1.0,
                 "utilities_efficiency": 0.85
             }
+            # Override with frontend values if provided
+            for key, value in opex.items():
+                if key in transformed_opex and value is not None:
+                    transformed_opex[key] = value
             transformed["opex"] = transformed_opex
-            
+
         # Handle capex config - fix validation issues
         if "capex" in frontend_data:
             capex = frontend_data["capex"].copy()
+            # Disable parity mode to use user form inputs instead of hardcoded values
+            capex["parity_mode"] = False
             # Fix installation_factor validation issue (must be ≤ 1)
             if capex.get("installation_factor", 0) > 1:
                 capex["installation_factor"] = 0.15  # Set to valid default
@@ -183,21 +202,21 @@ def transform_frontend_request(frontend_data: dict) -> dict:
             if "contingency_percent" in capex:
                 capex["contingency_factor"] = capex.pop("contingency_percent") / 100
             transformed["capex"] = capex
-            
+
         # Handle prices - extract clean raw_prices from complex nested structure
         transformed_prices = {"product_prices": {"default": 400}}
-        
+
         if "prices" in frontend_data and isinstance(frontend_data["prices"], dict):
             prices = frontend_data["prices"]
-            
+
             # Extract product prices if available
             if "product_prices" in prices:
                 transformed_prices["product_prices"] = prices["product_prices"]
-                
+
             # Extract raw_prices - handle the complex nested structure
             if "raw_prices" in prices and isinstance(prices["raw_prices"], dict):
                 raw_prices_section = prices["raw_prices"]
-                
+
                 # Check if raw_prices contains a nested "raw_prices" key with actual material prices
                 if "raw_prices" in raw_prices_section and isinstance(raw_prices_section["raw_prices"], dict):
                     # Use the nested raw_prices which contains the actual material:price mapping
@@ -229,15 +248,15 @@ def transform_frontend_request(frontend_data: dict) -> dict:
         else:
             from bioprocess.presets import RAW_PRICES
             transformed_prices["raw_prices"] = RAW_PRICES.copy()
-            
+
         transformed["prices"] = transformed_prices
-            
+
         # Ensure optimization and sensitivity configs exist
         transformed["optimization"] = frontend_data.get("optimization", {"enabled": False})
         transformed["sensitivity"] = frontend_data.get("sensitivity", {"enabled": False})
-        
+
         return transformed
-        
+
     except Exception as e:
         logger.error(f"Error transforming frontend request: {e}")
         raise ValueError(f"Failed to transform request data: {str(e)}")
@@ -286,17 +305,17 @@ async def run_scenario(request_data: dict, background_tasks: BackgroundTasks):
     try:
         # DEBUG: Log the raw request for debugging
         logger.info(f"Raw scenario request: {json.dumps(request_data, indent=2)}")
-        
+
         # Check if this is a structured RunScenarioRequest or raw frontend data
         if "scenario" in request_data and isinstance(request_data["scenario"], dict):
             # Frontend format - transform the scenario data
             scenario_data = request_data.get("scenario", {})
             transformed_data = transform_frontend_request(scenario_data)
-            
+
             # Create ScenarioInput from transformed data
             scenario = ScenarioInput(**transformed_data)
             async_mode = request_data.get("async_mode", False)
-            
+
         else:
             # Try to parse as RunScenarioRequest (for API tests)
             try:
@@ -306,7 +325,7 @@ async def run_scenario(request_data: dict, background_tasks: BackgroundTasks):
             except Exception as parse_err:
                 logger.error(f"Failed to parse as RunScenarioRequest: {parse_err}")
                 raise HTTPException(status_code=422, detail=f"Invalid request format: {str(parse_err)}")
-        
+
         # Ensure raw_prices are included
         from bioprocess.presets import RAW_PRICES
         if not scenario.prices.raw_prices:
@@ -332,7 +351,7 @@ async def run_scenario(request_data: dict, background_tasks: BackgroundTasks):
                 status=JobStatus.COMPLETED,
                 message="Scenario completed successfully",
             )
-            
+
     except ValueError as e:
         logger.error(f"Validation error in scenario: {e}")
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")
@@ -347,22 +366,22 @@ async def run_scenario_raw(request: dict, background_tasks: BackgroundTasks):
     try:
         # DEBUG: Log the raw request
         logger.info(f"Raw scenario request: {json.dumps(request, indent=2)}")
-        
+
         # Transform the request to match expected structure
         scenario_data = request.get("scenario", {})
         transformed_data = transform_frontend_request(scenario_data)
-        
+
         # Create ScenarioInput from transformed data
         scenario = ScenarioInput(**transformed_data)
-        
+
         # Ensure raw_prices are included
         from bioprocess.presets import RAW_PRICES
         if not scenario.prices.raw_prices:
             scenario.prices.raw_prices = RAW_PRICES.copy()
-        
+
         # Check async mode
         async_mode = request.get("async_mode", False)
-        
+
         if async_mode:
             # Run in background
             job_id = create_job(JobStatus.PENDING)
@@ -383,7 +402,7 @@ async def run_scenario_raw(request: dict, background_tasks: BackgroundTasks):
                 status=JobStatus.COMPLETED,
                 message="Scenario completed successfully",
             )
-            
+
     except ValueError as e:
         logger.error(f"Validation error in raw scenario: {e}")
         raise HTTPException(status_code=422, detail=f"Validation error: {str(e)}")

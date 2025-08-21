@@ -1,0 +1,205 @@
+{
+  "job_id": null,
+  "result": {
+    "scenario_name": "Form Data Test Scenario",
+    "timestamp": "2025-08-21T23:25:13.330756",
+    "kpis": {
+      "npv": 364271128.7480631,
+      "irr": 1.4578642047407468,
+      "payback_years": 1.4353057139173526,
+      "tpa": 302.09911200000005,
+      "target_tpa": 15.0,
+      "capex": 16970120.712127637,
+      "opex": 3055887.4166991715,
+      "opex_per_kg": 10.115512741722894,
+      "ebitda_margin": 0.9784776324644194,
+      "up_utilization": 1.0,
+      "ds_utilization": 0.3407407407407408,
+      "meets_tpa": 1.0,
+      "production_kg": 302099.112
+    },
+    "capacity": {
+      "per_strain": [
+        {
+          "name": "Test Strain",
+          "fermentation_time_h": 20.0,
+          "turnaround_time_h": 10.0,
+          "downstream_time_h": 5.0,
+          "batch_mass_kg": 191.25,
+          "cv_ferm": 0.15,
+          "cv_turn": 0.15,
+          "cv_down": 0.15,
+          "utility_rate_ferm_kw": 350.0,
+          "utility_rate_cent_kw": 20.0,
+          "utility_rate_lyo_kw": 2.0,
+          "utility_cost_steam": 0.025,
+          "ct_up_h": 30.0,
+          "ct_ds_h": 5.0,
+          "reactors_assigned": 6.0,
+          "ds_lines_assigned": 3.0,
+          "up_capacity_batches": 1611.8400000000001,
+          "ds_capacity_batches": 4730.4,
+          "feasible_batches": 1611.8400000000001,
+          "good_batches": 1579.6032,
+          "up_utilization": 1.0,
+          "ds_utilization": 0.3407407407407408,
+          "annual_kg_good": 302099.112
+        }
+      ],
+      "total_feasible_batches": 1611.8400000000001,
+      "total_good_batches": 1579.6032,
+      "total_annual_kg": 302099.112,
+      "weighted_up_utilization": 1.0,
+      "weighted_ds_utilization": 0.3407407407407408,
+      "bottleneck": "upstream",
+      "kg_p10": null,
+      "kg_p50": null,
+      "kg_p90": null
+    },
+    "equipment": {
+      "counts": {
+        "fermenters": 6,
+        "2500.0L_fermenters": 6,
+        "seed_fermenters": 5,
+        "media_tanks": 6,
+        "centrifuges": 3,
+        "tff_skids": 1,
+        "lyophilizers": 3,
+        "cone_mills": 1,
+        "v_blenders": 1,
+        "qc_labs": 1
+      },
+      "specifications": {
+        "fermenter_volume_l": 2500.0,
+        "seed_fermenter_volume_l": 375.0,
+        "media_tank_volume_l": 3750.0,
+        "lyophilizer_size_m2": 20,
+        "v_blender_volume_l": 500,
+        "strain_processing_requirements": [
+          {
+            "name": "Test Strain",
+            "respiration_type": "aerobic",
+            "requires_tff": false,
+            "downstream_complexity": 1.0
+          }
+        ],
+        "cost_breakdown": {
+          "fermenters": {
+            "unit_cost": 208096.13475421187,
+            "total_cost": 1248576.8085252712,
+            "count": 6,
+            "volume_l": 2500.0
+          },
+          "downstream": {
+            "centrifuges": {
+              "count": 3,
+              "unit_cost": 250000.0,
+              "total_cost": 750000.0
+            },
+            "tff_skids": {
+              "count": 1,
+              "unit_cost": 180000.0,
+              "total_cost": 180000.0
+            },
+            "lyophilizers": {
+              "count": 3,
+              "unit_cost": 1200000.0,
+              "total_cost": 3600000.0,
+              "size_m2": 20,
+              "complexity_factor": 1.0
+            },
+            "total_downstream_cost": 4530000.0
+          },
+          "auxiliary": {
+            "seed_fermenters": {
+              "count": 5,
+              "volume_l": 375.0,
+              "unit_cost": 18190.497907362613,
+              "total_cost": 90952.48953681307
+            },
+            "media_tanks": {
+              "count": 6,
+              "volume_l": 3750.0,
+              "unit_cost": 54169.31298850206,
+              "total_cost": 325015.87793101236
+            },
+            "cone_mill": {
+              "count": 1,
+              "unit_cost": 50000,
+              "total_cost": 50000
+            },
+            "v_blender": {
+              "count": 1,
+              "volume_l": 500,
+              "unit_cost": 30000,
+              "total_cost": 30000
+            },
+            "qc_lab": {
+              "count": 1,
+              "unit_cost": 250000,
+              "total_cost": 250000
+            },
+            "total_auxiliary_cost": 745968.3674678254
+          },
+          "utilities": {
+            "autoclave": 100000,
+            "purified_water": 150000,
+            "wfi_system": 400000,
+            "clean_steam": 120000,
+            "cip_system": 250000,
+            "total_utilities": 1020000
+          }
+        }
+      },
+      "equipment_cost": 7544545.175993097,
+      "installation_cost": 1508909.0351986196,
+      "utilities_cost": 1020000.0,
+      "total_installed_cost": 9053454.211191718
+    },
+    "economics": {
+      "annual_revenue": 141986582.64000002,
+      "raw_materials_cost": 1048955.25,
+      "utilities_cost": 141586.74558,
+      "labor_cost": 780000.0,
+      "maintenance_cost": 905345.4211191717,
+      "ga_other_cost": 180000.0,
+      "total_opex": 3055887.4166991715,
+      "land_cost": 1107446.972363737,
+      "building_cost": 8252838.408728211,
+      "equipment_cost": 7544545.175993097,
+      "contingency": 1731644.970625269,
+      "working_capital": 1385315.9765002152,
+      "total_capex": 16970120.712127637,
+      "npv": 364271128.7480631,
+      "irr": 1.4578642047407468,
+      "payback_years": 1.4353057139173526,
+      "ebitda_margin": 0.9784776324644194,
+      "cash_flows": [
+        -11879084.498489344,
+        -5091036.213638291,
+        38984373.89992447,
+        58477453.65502037,
+        73097263.47134233,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024,
+        82843803.34889024
+      ],
+      "licensing_fixed": 0.0,
+      "licensing_royalty_rate": 0.0
+    },
+    "optimization": null,
+    "sensitivity": null,
+    "warnings": [
+      "Production ratio is out of sensible range: 20.14x. (Target: 0.5x-1.5x)"
+    ],
+    "errors": [],
+    "calculation_time_s": 0.004712820053100586
+  },
+  "status": "completed",
+  "message": "Scenario completed successfully"
+}

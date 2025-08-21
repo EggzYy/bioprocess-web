@@ -487,25 +487,20 @@ class OptimizationService:
             # Run optimization with enhanced capacity enforcement
             if getattr(scenario, "use_multiobjective", True):
                 # Use progressive constraints for multi-objective optimization
-                best_solution, all_results_df = optimize_with_progressive_constraints(
+                best_solution, all_results_df = optimize_with_capacity_enforcement(
                     scenario,
-                    max_reactors=getattr(scenario, "max_reactors", 20),
-                    max_ds_lines=getattr(scenario, "max_ds_lines", 10),
+                    max_reactors=getattr(scenario, "max_reactors", 60),  # Match original
+                    max_ds_lines=getattr(scenario, "max_ds_lines", 12),  # Match original
                     volume_options=scenario.volumes.volume_options_l,
-                    max_excess_targets=[
-                        0.5,
-                        0.3,
-                        0.2,
-                        0.1,
-                        0.05,
-                    ],  # Progressively tighter
+                    enforce_capacity=True,
+                    max_allowed_excess=0.2,  # Max 20% excess
                 )
             else:
                 # Use strict capacity enforcement for single objective
                 best_solution, all_results_df = optimize_with_capacity_enforcement(
                     scenario,
-                    max_reactors=getattr(scenario, "max_reactors", 20),
-                    max_ds_lines=getattr(scenario, "max_ds_lines", 10),
+                    max_reactors=getattr(scenario, "max_reactors", 60),  # Match original
+                    max_ds_lines=getattr(scenario, "max_ds_lines", 12),  # Match original
                     volume_options=scenario.volumes.volume_options_l,
                     enforce_capacity=True,
                     max_allowed_excess=0.2,  # Max 20% excess
