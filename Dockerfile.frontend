@@ -1,0 +1,22 @@
+FROM python:3.12-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install nginx
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy static files
+COPY web/templates/ /app/web/templates/
+COPY web/static/ /app/web/static/
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
