@@ -23,13 +23,17 @@ from .presets import STRAIN_DB, STRAIN_BATCH_DB, RAW_PRICES
 from .capacity import calculate_capacity_deterministic, calculate_capacity_monte_carlo
 from .sizing import calculate_equipment_sizing
 from .econ import calculate_economics
-from .optimizer_enhanced import (
+from .optimizer_consolidated import (
     optimize_with_capacity_enforcement,
 )
 from .excel import export_to_excel
 
 # Setup logger
 logger = logging.getLogger(__name__)
+
+# Add null handler to prevent "No handler found" warnings
+if not logger.handlers:
+    logger.addHandler(logging.NullHandler())
 
 
 def load_strain_from_database(strain_name: str) -> StrainInput:
@@ -41,8 +45,13 @@ def load_strain_from_database(strain_name: str) -> StrainInput:
 
     Returns:
         StrainInput model with strain data
+
+    Raises:
+        ValueError: If strain not found in database
     """
+    logger.debug(f"Loading strain: {strain_name}")
     if strain_name not in STRAIN_DB:
+        logger.error(f"Strain not found in database: {strain_name}")
         raise ValueError(f"Strain '{strain_name}' not found in database")
 
     strain_db = STRAIN_DB[strain_name]
@@ -78,8 +87,12 @@ def prepare_scenario(scenario: ScenarioInput) -> ScenarioInput:
     Returns:
         Prepared scenario with defaults
     """
+    logger.info(f"Preparing scenario: {scenario.name}")
+    logger.debug(f"Target TPA: {scenario.target_tpa}, Strains: {len(scenario.strains)}")
+
     # Load raw prices if not provided
     if not scenario.prices.raw_prices:
+        logger.debug("Using default raw prices")
         scenario.prices.raw_prices = RAW_PRICES.copy()
 
     # Ensure strains are properly loaded
@@ -92,6 +105,8 @@ def prepare_scenario(scenario: ScenarioInput) -> ScenarioInput:
     if not scenario.volumes.volume_options_l:
         scenario.volumes.volume_options_l = [scenario.volumes.base_fermenter_vol_l]
 
+    logger.debug(f"Scenario prepared: {len(scenario.strains)} strains, "
+                 f"volume options: {scenario.volumes.volume_options_l}")
     return scenario
 
 

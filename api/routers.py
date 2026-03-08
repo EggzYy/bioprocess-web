@@ -14,30 +14,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .schemas import (
-    RunScenarioRequest,
-    RunScenarioResponse,
-    ExportRequest,
-    ExportResponse,
-    OptimizationRequest,
-    OptimizationResponse,
-    JobInfo,
-    JobProgressResponse,
-    ConfigSaveRequest,
-    ConfigSaveResponse,
-    ConfigListResponse,
-    SensitivityRequest,
-    BatchScenarioRequest,
-    BatchScenarioResponse,
-    StrainDatabaseResponse,
-    JobStatus,
-)
-
-# Import bioprocess modules
-import sys
-
-sys.path.append(str(Path(__file__).parent.parent))
-
+# Import bioprocess modules using relative imports
 from bioprocess.orchestrator import (
     run_scenario as run_scenario_func,
     run_optimization as run_optimization_func,

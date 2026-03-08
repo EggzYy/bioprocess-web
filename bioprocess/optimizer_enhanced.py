@@ -1,20 +1,31 @@
 """
 Enhanced optimizer with improved capacity constraint enforcement.
 This module provides better handling of excess capacity during multi-objective optimization.
+
+This module is maintained for backward compatibility.
+Use optimizer_consolidated.py for new code.
 """
+
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import logging
-from typing import Dict, Any, Tuple, List, Optional
-from .models import ScenarioInput
-from .optimizer import evaluate_configuration, optimize_for_minimal_excess
+
+from .optimizer_consolidated import (
+    evaluate_configuration,
+    optimize_for_minimal_excess,
+    optimize_with_capacity_enforcement,
+)
+
+if TYPE_CHECKING:
+    from .models import ScenarioInput
 
 logger = logging.getLogger(__name__)
 
 
 def optimize_with_progressive_constraints(
-    scenario: ScenarioInput,
+    scenario: "ScenarioInput",
     max_reactors: int = 20,
     max_ds_lines: int = 10,
     volume_options: Optional[List[float]] = None,
