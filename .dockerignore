@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application specific
+exports/
+cache/
+*.json
+!package.json
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Secrets
+.env
+.env.local
+*.pem
+
+# Git
+.git/
+
+# Test files (don't include test code in image)
+tests/
+test_*.py
+debug_*.py
+validate_*.py
+cross_validation_*.py
+*.test.ts
