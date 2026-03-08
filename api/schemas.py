@@ -7,12 +7,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
 
-# Import bioprocess models
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).parent.parent))
-
+# Import bioprocess models using relative imports
 from bioprocess.models import (
     ScenarioInput,
     ScenarioResult,

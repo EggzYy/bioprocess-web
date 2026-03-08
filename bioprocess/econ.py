@@ -16,6 +16,7 @@ from .models import (
     StrainInput,
 )
 from .presets import STRAIN_BATCH_DB
+from .constants import DEFAULT_BASE_WORKING_VOLUME_L
 
 
 def npv(discount_rate: float, cash_flows: List[float]) -> float:
@@ -242,7 +243,7 @@ def calculate_raw_materials_cost(
         Total annual raw materials cost
     """
     total_cost = 0.0
-    base_working_volume = 1600.0  # Base working volume from original (2000L @ 0.8)
+    base_working_volume = DEFAULT_BASE_WORKING_VOLUME_L
     actual_working_volume = fermenter_volume_l * working_volume_fraction
     scale_factor = actual_working_volume / base_working_volume
 
