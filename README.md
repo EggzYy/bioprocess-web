@@ -63,7 +63,7 @@ See docs/README.md for the documentation index (Getting Started, Parity Mode, Va
 
 1. Clone the repository:
 ```bash
-cd /home/eggzy/Downloads/Project_Hasan/bioprocess-web
+cd bioprocess-web
 ```
 
 2. Create a virtual environment:
